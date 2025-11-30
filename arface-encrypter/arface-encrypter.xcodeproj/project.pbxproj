@@ -1,0 +1,636 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		90E0A7352EDCEB8B0019451C /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 90E0A7342EDCEB8B0019451C /* Supabase */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		90E0A70C2EDCE8C80019451C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 90E0A6F62EDCE8C70019451C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 90E0A6FD2EDCE8C70019451C;
+			remoteInfo = "arface-encrypter";
+		};
+		90E0A7162EDCE8C80019451C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 90E0A6F62EDCE8C70019451C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 90E0A6FD2EDCE8C70019451C;
+			remoteInfo = "arface-encrypter";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		90E0A6FE2EDCE8C70019451C /* arface-encrypter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "arface-encrypter.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		90E0A70B2EDCE8C80019451C /* arface-encrypterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "arface-encrypterTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		90E0A7152EDCE8C80019451C /* arface-encrypterUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "arface-encrypterUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		90E0A76A2EDCF4D90019451C /* Exceptions for "arface-encrypter" folder in "arface-encrypter" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 90E0A6FD2EDCE8C70019451C /* arface-encrypter */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		90E0A7002EDCE8C70019451C /* arface-encrypter */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				90E0A76A2EDCF4D90019451C /* Exceptions for "arface-encrypter" folder in "arface-encrypter" target */,
+			);
+			path = "arface-encrypter";
+			sourceTree = "<group>";
+		};
+		90E0A70E2EDCE8C80019451C /* arface-encrypterTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "arface-encrypterTests";
+			sourceTree = "<group>";
+		};
+		90E0A7182EDCE8C80019451C /* arface-encrypterUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "arface-encrypterUITests";
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		90E0A6FB2EDCE8C70019451C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				90E0A7352EDCEB8B0019451C /* Supabase in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		90E0A7082EDCE8C80019451C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		90E0A7122EDCE8C80019451C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		90E0A6F52EDCE8C70019451C = {
+			isa = PBXGroup;
+			children = (
+				90E0A7002EDCE8C70019451C /* arface-encrypter */,
+				90E0A70E2EDCE8C80019451C /* arface-encrypterTests */,
+				90E0A7182EDCE8C80019451C /* arface-encrypterUITests */,
+				90E0A7332EDCEB8B0019451C /* Frameworks */,
+				90E0A6FF2EDCE8C70019451C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		90E0A6FF2EDCE8C70019451C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				90E0A6FE2EDCE8C70019451C /* arface-encrypter.app */,
+				90E0A70B2EDCE8C80019451C /* arface-encrypterTests.xctest */,
+				90E0A7152EDCE8C80019451C /* arface-encrypterUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		90E0A7332EDCEB8B0019451C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		90E0A6FD2EDCE8C70019451C /* arface-encrypter */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 90E0A71F2EDCE8C80019451C /* Build configuration list for PBXNativeTarget "arface-encrypter" */;
+			buildPhases = (
+				90E0A6FA2EDCE8C70019451C /* Sources */,
+				90E0A6FB2EDCE8C70019451C /* Frameworks */,
+				90E0A6FC2EDCE8C70019451C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				90E0A7002EDCE8C70019451C /* arface-encrypter */,
+			);
+			name = "arface-encrypter";
+			packageProductDependencies = (
+				90E0A7342EDCEB8B0019451C /* Supabase */,
+			);
+			productName = "arface-encrypter";
+			productReference = 90E0A6FE2EDCE8C70019451C /* arface-encrypter.app */;
+			productType = "com.apple.product-type.application";
+		};
+		90E0A70A2EDCE8C80019451C /* arface-encrypterTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 90E0A7222EDCE8C80019451C /* Build configuration list for PBXNativeTarget "arface-encrypterTests" */;
+			buildPhases = (
+				90E0A7072EDCE8C80019451C /* Sources */,
+				90E0A7082EDCE8C80019451C /* Frameworks */,
+				90E0A7092EDCE8C80019451C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				90E0A70D2EDCE8C80019451C /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				90E0A70E2EDCE8C80019451C /* arface-encrypterTests */,
+			);
+			name = "arface-encrypterTests";
+			packageProductDependencies = (
+			);
+			productName = "arface-encrypterTests";
+			productReference = 90E0A70B2EDCE8C80019451C /* arface-encrypterTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		90E0A7142EDCE8C80019451C /* arface-encrypterUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 90E0A7252EDCE8C80019451C /* Build configuration list for PBXNativeTarget "arface-encrypterUITests" */;
+			buildPhases = (
+				90E0A7112EDCE8C80019451C /* Sources */,
+				90E0A7122EDCE8C80019451C /* Frameworks */,
+				90E0A7132EDCE8C80019451C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				90E0A7172EDCE8C80019451C /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				90E0A7182EDCE8C80019451C /* arface-encrypterUITests */,
+			);
+			name = "arface-encrypterUITests";
+			packageProductDependencies = (
+			);
+			productName = "arface-encrypterUITests";
+			productReference = 90E0A7152EDCE8C80019451C /* arface-encrypterUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		90E0A6F62EDCE8C70019451C /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2610;
+				LastUpgradeCheck = 2610;
+				TargetAttributes = {
+					90E0A6FD2EDCE8C70019451C = {
+						CreatedOnToolsVersion = 26.1.1;
+					};
+					90E0A70A2EDCE8C80019451C = {
+						CreatedOnToolsVersion = 26.1.1;
+						TestTargetID = 90E0A6FD2EDCE8C70019451C;
+					};
+					90E0A7142EDCE8C80019451C = {
+						CreatedOnToolsVersion = 26.1.1;
+						TestTargetID = 90E0A6FD2EDCE8C70019451C;
+					};
+				};
+			};
+			buildConfigurationList = 90E0A6F92EDCE8C70019451C /* Build configuration list for PBXProject "arface-encrypter" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 90E0A6F52EDCE8C70019451C;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				90E0A7282EDCE93C0019451C /* XCRemoteSwiftPackageReference "supabase-swift" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 90E0A6FF2EDCE8C70019451C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				90E0A6FD2EDCE8C70019451C /* arface-encrypter */,
+				90E0A70A2EDCE8C80019451C /* arface-encrypterTests */,
+				90E0A7142EDCE8C80019451C /* arface-encrypterUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		90E0A6FC2EDCE8C70019451C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		90E0A7092EDCE8C80019451C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		90E0A7132EDCE8C80019451C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		90E0A6FA2EDCE8C70019451C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		90E0A7072EDCE8C80019451C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		90E0A7112EDCE8C80019451C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		90E0A70D2EDCE8C80019451C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 90E0A6FD2EDCE8C70019451C /* arface-encrypter */;
+			targetProxy = 90E0A70C2EDCE8C80019451C /* PBXContainerItemProxy */;
+		};
+		90E0A7172EDCE8C80019451C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 90E0A6FD2EDCE8C70019451C /* arface-encrypter */;
+			targetProxy = 90E0A7162EDCE8C80019451C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		90E0A71D2EDCE8C80019451C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = TZD9864C39;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		90E0A71E2EDCE8C80019451C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = TZD9864C39;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		90E0A7202EDCE8C80019451C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = TZD9864C39;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "arface-encrypter/Info.plist";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ryan.arface-encrypter.arface-encrypter";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		90E0A7212EDCE8C80019451C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = TZD9864C39;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "arface-encrypter/Info.plist";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ryan.arface-encrypter.arface-encrypter";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		90E0A7232EDCE8C80019451C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = TZD9864C39;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ryan.arface-encrypter.arface-encrypterTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/arface-encrypter.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/arface-encrypter";
+			};
+			name = Debug;
+		};
+		90E0A7242EDCE8C80019451C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = TZD9864C39;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ryan.arface-encrypter.arface-encrypterTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/arface-encrypter.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/arface-encrypter";
+			};
+			name = Release;
+		};
+		90E0A7262EDCE8C80019451C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = TZD9864C39;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ryan.arface-encrypter.arface-encrypterUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "arface-encrypter";
+			};
+			name = Debug;
+		};
+		90E0A7272EDCE8C80019451C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = TZD9864C39;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ryan.arface-encrypter.arface-encrypterUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "arface-encrypter";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		90E0A6F92EDCE8C70019451C /* Build configuration list for PBXProject "arface-encrypter" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				90E0A71D2EDCE8C80019451C /* Debug */,
+				90E0A71E2EDCE8C80019451C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		90E0A71F2EDCE8C80019451C /* Build configuration list for PBXNativeTarget "arface-encrypter" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				90E0A7202EDCE8C80019451C /* Debug */,
+				90E0A7212EDCE8C80019451C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		90E0A7222EDCE8C80019451C /* Build configuration list for PBXNativeTarget "arface-encrypterTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				90E0A7232EDCE8C80019451C /* Debug */,
+				90E0A7242EDCE8C80019451C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		90E0A7252EDCE8C80019451C /* Build configuration list for PBXNativeTarget "arface-encrypterUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				90E0A7262EDCE8C80019451C /* Debug */,
+				90E0A7272EDCE8C80019451C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		90E0A7282EDCE93C0019451C /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase-community/supabase-swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		90E0A7342EDCEB8B0019451C /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 90E0A7282EDCE93C0019451C /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 90E0A6F62EDCE8C70019451C /* Project object */;
+}
