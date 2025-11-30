@@ -14,15 +14,21 @@ struct ContentView: View {
                 .tabItem {
                     Label("Encode", systemImage: "lock.fill")
                 }
-            
+
             DecodeView()
                 .tabItem {
                     Label("Decode", systemImage: "lock.open.fill")
                 }
-            
+
             ProfileView()
                 .tabItem {
                     Label("Profile", systemImage: "person.fill")
+                }
+
+            // TEMPORARY: Test tab for Phase 2 - will be removed in Phase 6
+            FaceDetectionTestView()
+                .tabItem {
+                    Label("Test", systemImage: "face.smiling")
                 }
         }
     }
