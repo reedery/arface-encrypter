@@ -23,11 +23,8 @@ struct ProfileView: View {
                         // Avatar Picker
                         Picker("Avatar", selection: $userSettings.selectedAvatar) {
                             ForEach(AvatarType.allCases, id: \.self) { avatar in
-                                HStack {
-                                    Text(avatar.displayName)
-                                    Text(avatar == .bear ? "🐻" : "🦊")
-                                }
-                                .tag(avatar)
+                                Text("\(avatar.displayName) \(avatar == .bear ? "🐻" : "🦊")")
+                                    .tag(avatar)
                             }
                         }
                         .pickerStyle(.segmented)
