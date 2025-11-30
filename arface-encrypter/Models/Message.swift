@@ -13,7 +13,7 @@ struct Message: Codable, Identifiable {
     let expressionHash: String?
     let message: String?
     let expressionList: String?
-    
+
     // Map snake_case from Supabase to camelCase in Swift
     enum CodingKeys: String, CodingKey {
         case id
@@ -21,5 +21,12 @@ struct Message: Codable, Identifiable {
         case expressionHash = "expression_hash"
         case message
         case expressionList = "expression_list"
+    }
+
+    /// Computed property to convert expression_list string to array of FaceExpression enums
+    var expressions: [FaceExpression]? {
+        guard let expressionList = expressionList else { return nil }
+        return expressionList.split(separator: ",")
+            .compactMap { FaceExpression(rawValue: String($0)) }
     }
 }
