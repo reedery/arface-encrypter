@@ -11,6 +11,7 @@ struct ProfileView: View {
     @State private var userSettings = UserSettings()
     @State private var sprites: [FaceExpression: UIImage] = [:]
     @State private var showTestView = false
+    @State private var showGIFTestView = false
 
     var body: some View {
         NavigationStack {
@@ -136,6 +137,23 @@ struct ProfileView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                         }
                         .buttonStyle(.plain)
+
+                        Button {
+                            showGIFTestView = true
+                        } label: {
+                            HStack {
+                                Image(systemName: "photo.stack.fill")
+                                Text("GIF Generation Test")
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .padding()
+                            .background(Color.purple.opacity(0.1))
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                        }
+                        .buttonStyle(.plain)
                     }
                     .padding(.horizontal)
 
@@ -145,6 +163,9 @@ struct ProfileView: View {
             .navigationTitle("Profile")
             .sheet(isPresented: $showTestView) {
                 FaceDetectionTestView()
+            }
+            .sheet(isPresented: $showGIFTestView) {
+                GIFTestView()
             }
             .task {
                 // Load sprites when view appears
