@@ -32,7 +32,7 @@ struct DecodeView: View {
     // MARK: - Message List View
     
     private var messageListView: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 0) {
             VStack(spacing: 12) {
                 Image(systemName: "lock.open.fill")
                     .font(.system(size: 60))
@@ -48,9 +48,8 @@ struct DecodeView: View {
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
             }
-            .padding(.top, 40)
-            
-            Spacer()
+            .padding(.top, 100)
+            .padding(.bottom, 30)
             
             Button {
                 viewModel.startDecoding(with: decodingDetector)
