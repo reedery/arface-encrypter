@@ -32,6 +32,34 @@ class GIFGenerator {
         }
     }
 
+    /// Clean up old GIF files from temp directory
+    static func cleanupOldGIFs() {
+        let tempDirectory = FileManager.default.temporaryDirectory
+        let fileManager = FileManager.default
+        
+        do {
+            let contents = try fileManager.contentsOfDirectory(
+                at: tempDirectory,
+                includingPropertiesForKeys: [.creationDateKey],
+                options: [.skipsHiddenFiles]
+            )
+            
+            // Filter for arface GIF files
+            let arfaceGIFs = contents.filter { $0.lastPathComponent.hasPrefix("arface_") && $0.pathExtension == "gif" }
+            
+            // Remove all old arface GIF files
+            for gifURL in arfaceGIFs {
+                try? fileManager.removeItem(at: gifURL)
+            }
+            
+            if !arfaceGIFs.isEmpty {
+                print("🧹 Cleaned up \(arfaceGIFs.count) old GIF file(s)")
+            }
+        } catch {
+            print("⚠️ Failed to cleanup old GIFs: \(error.localizedDescription)")
+        }
+    }
+
     /// Generate animated GIF from expression sequence
     /// - Parameters:
     ///   - expressions: Array of 5 facial expressions
@@ -43,6 +71,9 @@ class GIFGenerator {
         avatar: AvatarType,
         messageID: String
     ) async throws -> URL {
+
+        // Clean up old GIF files before generating new one
+        cleanupOldGIFs()
 
         print("🎬 Starting GIF generation...")
         print("   Expressions: \(expressions.map(\.rawValue).joined(separator: ", "))")
@@ -57,41 +88,36 @@ class GIFGenerator {
             throw GIFError.missingSprites
         }
 
-        // 2. Use wink_l as neutral frame between expressions
-        guard let neutralSprite = sprites[.winkLeft] else {
-            throw GIFError.invalidSprite
-        }
-
-        // 3. Build frame sequence
+        // 2. Build frame sequence - just the 5 expressions, no neutral frames
         var frames: [UIImage] = []
         var frameDurations: [TimeInterval] = []
 
-        // Start with neutral
-        frames.append(neutralSprite)
-        frameDurations.append(0.5)
-
-        // Add each expression with neutral in between
-        for expression in expressions {
+        // Add each expression frame
+        for (index, expression) in expressions.enumerated() {
             guard let expressionSprite = sprites[expression] else {
                 print("⚠️ Missing sprite for expression: \(expression.rawValue)")
                 throw GIFError.invalidSprite
             }
 
+            // Add frame number overlay
+            let frameNumber = index + 1
+            var expressionWithNumber = addFrameNumber(to: expressionSprite, frameNumber: frameNumber)
+            
+            // Add ID overlay to first expression frame
+            if index == 0 {
+                expressionWithNumber = addIDOverlay(to: expressionWithNumber, messageID: messageID)
+            }
+
             // Expression frame
-            frames.append(expressionSprite)
-            frameDurations.append(0.5)
-
-            // Back to neutral
-            frames.append(neutralSprite)
-            frameDurations.append(0.3)
+            frames.append(expressionWithNumber)
+            
+            // Frame 1 holds for 1.5s, other frames for 0.7s
+            if index == 0 {
+                frameDurations.append(1.5)
+            } else {
+                frameDurations.append(0.7)
+            }
         }
-
-        // 4. Add message ID overlay to last frame
-        let lastFrameWithID = addTextOverlay(to: frames.last!, text: "ID:\(messageID)")
-        frames[frames.count - 1] = lastFrameWithID
-
-        // Extend last frame duration for readability
-        frameDurations[frameDurations.count - 1] = 0.5
 
         print("   Total frames: \(frames.count)")
         print("   Total duration: \(frameDurations.reduce(0, +))s")
@@ -159,38 +185,69 @@ class GIFGenerator {
         return fileURL
     }
 
-    /// Add text overlay to image
-    private static func addTextOverlay(to image: UIImage, text: String) -> UIImage {
+    /// Add frame number to bottom right corner of image
+    private static func addFrameNumber(to image: UIImage, frameNumber: Int) -> UIImage {
         let renderer = UIGraphicsImageRenderer(size: image.size)
 
         return renderer.image { context in
             // Draw original image
             image.draw(in: CGRect(origin: .zero, size: image.size))
 
-            // Configure text
+            // Configure text - small font with black outline
             let attributes: [NSAttributedString.Key: Any] = [
-                .font: UIFont.boldSystemFont(ofSize: 14),
+                .font: UIFont.systemFont(ofSize: 18),
                 .foregroundColor: UIColor.white,
                 .strokeColor: UIColor.black,
-                .strokeWidth: -3.0  // Negative for fill + stroke
+                .strokeWidth: -4.0  // Negative for fill + stroke
             ]
 
+            let text = "\(frameNumber)"
             let attributedText = NSAttributedString(string: text, attributes: attributes)
 
-            // Calculate text position (top-left corner)
+            // Calculate text position (bottom-right corner)
             let textSize = attributedText.size()
+            let padding: CGFloat = 12
             let textRect = CGRect(
-                x: 8,
-                y: 8,
+                x: image.size.width - textSize.width - padding,
+                y: image.size.height - textSize.height - padding,
                 width: textSize.width,
                 height: textSize.height
             )
 
-            // Draw semi-transparent background
-            context.cgContext.setFillColor(UIColor.black.withAlphaComponent(0.5).cgColor)
-            context.cgContext.fill(textRect.insetBy(dx: -4, dy: -2))
-
             // Draw text
+            attributedText.draw(in: textRect)
+        }
+    }
+
+    /// Add subtle ID overlay to image (top-left corner)
+    private static func addIDOverlay(to image: UIImage, messageID: String) -> UIImage {
+        let renderer = UIGraphicsImageRenderer(size: image.size)
+
+        return renderer.image { context in
+            // Draw original image
+            image.draw(in: CGRect(origin: .zero, size: image.size))
+
+            // Configure text - smaller, more subtle
+            let attributes: [NSAttributedString.Key: Any] = [
+                .font: UIFont.systemFont(ofSize: 10),  // Smaller font
+                .foregroundColor: UIColor.white.withAlphaComponent(0.7),  // Semi-transparent white
+                .strokeColor: UIColor.black.withAlphaComponent(0.5),  // Semi-transparent black
+                .strokeWidth: -2.0  // Thinner stroke
+            ]
+
+            let text = "ID:\(messageID)"
+            let attributedText = NSAttributedString(string: text, attributes: attributes)
+
+            // Calculate text position (top-left corner with small padding)
+            let textSize = attributedText.size()
+            let textRect = CGRect(
+                x: 6,
+                y: 6,
+                width: textSize.width,
+                height: textSize.height
+            )
+
+            // Draw text without background for more subtlety
             attributedText.draw(in: textRect)
         }
     }
