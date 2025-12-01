@@ -160,7 +160,6 @@ struct ProfileView: View {
                     Spacer()
                 }
             }
-            .navigationTitle("Profile")
             .sheet(isPresented: $showTestView) {
                 FaceDetectionTestView()
             }

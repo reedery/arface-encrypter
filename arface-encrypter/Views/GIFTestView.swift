@@ -231,7 +231,7 @@ struct GIFTestView: View {
                 .fontWeight(.bold)
 
             AnimatedGIFView(url: gifURL)
-                .frame(height: 300)
+                .frame(width: 256, height: 256)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)

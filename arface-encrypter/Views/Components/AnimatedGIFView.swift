@@ -18,6 +18,12 @@ struct AnimatedGIFView: UIViewRepresentable {
         imageView.contentMode = .scaleAspectFit
         imageView.clipsToBounds = true
         imageView.backgroundColor = .clear
+        
+        // Set compression resistance and hugging to allow proper frame constraints
+        imageView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        imageView.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
+        imageView.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        imageView.setContentHuggingPriority(.defaultLow, for: .vertical)
 
         // Load and animate GIF
         loadAnimatedGIF(into: imageView, from: url)
@@ -28,6 +34,14 @@ struct AnimatedGIFView: UIViewRepresentable {
     func updateUIView(_ uiView: UIImageView, context: Context) {
         // Reload GIF if URL changes
         loadAnimatedGIF(into: uiView, from: url)
+    }
+    
+    func sizeThatFits(_ proposal: ProposedViewSize, uiView: UIImageView, context: Context) -> CGSize? {
+        // Respect the proposed size from SwiftUI
+        return CGSize(
+            width: proposal.width ?? 256,
+            height: proposal.height ?? 256
+        )
     }
 
     private func loadAnimatedGIF(into imageView: UIImageView, from url: URL) {
