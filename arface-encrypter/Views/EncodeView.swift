@@ -66,6 +66,14 @@ struct EncodeView: View {
                     .textFieldStyle(.roundedBorder)
                     .lineLimit(3...6)
                     .padding(.horizontal)
+                    .toolbar {
+                        ToolbarItemGroup(placement: .keyboard) {
+                            Spacer()
+                            Button("Done") {
+                                hideKeyboard()
+                            }
+                        }
+                    }
                 
                 HStack {
                     Spacer()
@@ -355,6 +363,12 @@ struct EncodeView: View {
             }
         }
         .gifShareSheet(isPresented: $showingShareSheet, gifURL: viewModel.generatedGIFURL)
+    }
+    
+    // MARK: - Helper Methods
+    
+    private func hideKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 }
 
