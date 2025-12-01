@@ -95,41 +95,41 @@ struct GIFTestView: View {
             .background(Color.gray.opacity(0.1))
             .clipShape(RoundedRectangle(cornerRadius: 12))
 
-            // Recorded expressions
-            HStack(spacing: 16) {
+            // Recorded expressions - FIXED LAYOUT
+            HStack(spacing: 8) {
                 ForEach(0..<5, id: \.self) { index in
                     if index < recorder.recordedExpressions.count {
                         VStack(spacing: 4) {
-                            Text(recorder.recordedExpressions[index].emoji)
-                                .font(.system(size: 50))
+                            ExpressionEmojiView(expression: recorder.recordedExpressions[index])
+                                .font(.system(size: 40))
                             Text(recorder.recordedExpressions[index].displayName)
                                 .font(.caption2)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.7)
                                 .foregroundStyle(.secondary)
                         }
-                        .frame(maxWidth: .infinity)
-                        .padding()
+                        .frame(width: 60, height: 80)
+                        .padding(6)
                         .background(Color.green.opacity(0.1))
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                         .transition(.scale.combined(with: .opacity))
                     } else {
                         Circle()
                             .fill(Color.gray.opacity(0.2))
-                            .frame(width: 50, height: 50)
-                            .frame(maxWidth: .infinity)
-                            .padding()
+                            .frame(width: 40, height: 40)
+                            .frame(width: 60, height: 80)
+                            .padding(6)
                     }
                 }
             }
             .animation(.spring(response: 0.3), value: recorder.recordedExpressions.count)
 
-            Spacer()
-
-            // Camera View
+            // Camera View - MADE TALLER
             ARFaceTrackingView(
                 detector: detector,
                 showDebugOverlay: false
             )
-            .frame(height: 200)
+            .frame(height: 350)
             .clipShape(RoundedRectangle(cornerRadius: 12))
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
@@ -170,8 +170,19 @@ struct GIFTestView: View {
                 .font(.title)
                 .fontWeight(.bold)
 
-            Text("Recorded: \(recorder.getExpressionEmojis())")
-                .font(.system(size: 40))
+            // SMALLER TEXT
+            VStack(spacing: 8) {
+                Text("Recorded:")
+                    .font(.body)
+                    .foregroundStyle(.secondary)
+
+                HStack(spacing: 4) {
+                    ForEach(recorder.recordedExpressions, id: \.rawValue) { expression in
+                        ExpressionEmojiView(expression: expression)
+                            .font(.system(size: 32))
+                    }
+                }
+            }
 
             Text(recorder.getExpressionHash())
                 .font(.caption)
@@ -294,11 +305,34 @@ struct GIFTestView: View {
     }
 
     private func reset() {
+        // Stop tracking first
+        detector.stopTracking()
+
+        // Reset state
         recorder.reset()
         generatedGIFURL = nil
         extractedMessageID = nil
         errorMessage = nil
+
+        // Restart recording and tracking
         recorder.startRecording()
+
+        // Give a brief delay before restarting tracking to ensure clean state
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            detector.startTracking()
+        }
+    }
+}
+
+// MARK: - Helper View for Flippable Emojis
+
+/// Displays an emoji with optional horizontal flip for right wink
+struct ExpressionEmojiView: View {
+    let expression: FaceExpression
+
+    var body: some View {
+        Text(expression.emoji)
+            .scaleEffect(x: expression.shouldFlipEmoji ? -1 : 1, y: 1)
     }
 }
 

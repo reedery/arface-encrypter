@@ -68,7 +68,7 @@ struct ProfileView: View {
                                                 .frame(width: 100, height: 100)
                                         }
 
-                                        Text(expression.emoji)
+                                        ExpressionEmojiView(expression: expression)
                                             .font(.title3)
 
                                         Text(expression.displayName)
