@@ -20,79 +20,6 @@ struct DecodeView: View {
                 messageListView
             }
         }
-    }
-    
-    // MARK: - Message List View
-    
-    private var messageListView: some View {
-        Group {
-            if viewModel.isLoading {
-                ProgressView("Loading messages...")
-            } else if let error = viewModel.errorMessage {
-                errorView(error)
-            } else {
-                VStack(spacing: 0) {
-                    // Decode button at top
-                    VStack(spacing: 12) {
-                        Button {
-                            viewModel.startDecoding(with: decodingDetector)
-                        } label: {
-                            HStack {
-                                Image(systemName: "lock.open.fill")
-                                    .font(.title3)
-                                Text("Decode a Message")
-                                    .font(.headline)
-                            }
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.accentColor)
-                            .foregroundStyle(.white)
-                            .cornerRadius(12)
-                        }
-                        .padding(.horizontal)
-                        .padding(.top)
-                        
-                        Text("Perform the expression sequence to unlock a secret message")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal)
-                    }
-                    .padding(.bottom)
-                    .background(Color(.systemBackground))
-                    
-                    Divider()
-                    
-                    // Message list
-                    if viewModel.messages.isEmpty {
-                        emptyStateView
-                    } else {
-                        List(viewModel.messages) { message in
-                            MessageRowView(message: message)
-                        }
-                        .refreshable {
-                            await viewModel.fetchMessages()
-                        }
-                    }
-                }
-            }
-        }
-        .toolbar {
-            if !viewModel.isLoading && viewModel.errorMessage == nil {
-                ToolbarItem(placement: .primaryAction) {
-                    Button {
-                        Task {
-                            await viewModel.fetchMessages()
-                        }
-                    } label: {
-                        Image(systemName: "arrow.clockwise")
-                    }
-                }
-            }
-        }
-        .task {
-            await viewModel.fetchMessages()
-        }
         .sheet(isPresented: $showingImagePicker) {
             ImagePicker { url in
                 Task {
@@ -102,32 +29,57 @@ struct DecodeView: View {
         }
     }
     
-    private func errorView(_ error: String) -> some View {
-        VStack(spacing: 16) {
-            Image(systemName: "exclamationmark.triangle.fill")
-                .font(.system(size: 50))
-                .foregroundStyle(.orange)
-            Text("Error")
-                .font(.headline)
-            Text(error)
-                .multilineTextAlignment(.center)
-                .foregroundStyle(.secondary)
-            Button("Retry") {
-                Task {
-                    await viewModel.fetchMessages()
-                }
-            }
-            .buttonStyle(.borderedProminent)
-        }
-        .padding()
-    }
+    // MARK: - Message List View
     
-    private var emptyStateView: some View {
-        ContentUnavailableView(
-            "No Messages Yet",
-            systemImage: "tray.fill",
-            description: Text("Decode a GIF to unlock its secret message")
-        )
+    private var messageListView: some View {
+        VStack(spacing: 20) {
+            Spacer()
+            
+            VStack(spacing: 12) {
+                Image(systemName: "lock.open.fill")
+                    .font(.system(size: 60))
+                    .foregroundStyle(.orange)
+                
+                Text("Unlock a Secret Message")
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                
+                Text("Use your face to perform the expression sequence")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal)
+            }
+            
+            Spacer()
+            
+            Button {
+                viewModel.startDecoding(with: decodingDetector)
+            } label: {
+                HStack(spacing: 8) {
+                    Image(systemName: "faceid")
+                        .font(.system(size: 24, weight: .semibold))
+                    Text("Decode a Message")
+                        .fontWeight(.semibold)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 18)
+                .padding(.horizontal, 20)
+                .background(
+                    LinearGradient(
+                        colors: [Color.purple, Color.purple.opacity(0.8)],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .foregroundStyle(.white)
+                .cornerRadius(16)
+                .shadow(color: .purple.opacity(0.3), radius: 8, x: 0, y: 4)
+            }
+            .padding(.horizontal, 24)
+            
+            Spacer()
+        }
     }
     
     // MARK: - Decoding Flow View
@@ -409,49 +361,6 @@ struct DecodeView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color(.systemBackground))
-    }
-}
-
-// MARK: - Message Row View
-
-struct MessageRowView: View {
-    let message: Message
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Text("ID: \(message.id)")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                Spacer()
-                Text(message.createdAt, style: .date)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-            
-            if let expressionHash = message.expressionHash {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Expression Hash:")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    Text(expressionHash)
-                        .font(.system(.body, design: .monospaced))
-                        .foregroundStyle(.blue)
-                }
-            }
-            
-            if let messageText = message.message {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Message:")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    Text(messageText)
-                        .font(.body)
-                }
-            }
-            
-        }
-        .padding(.vertical, 4)
     }
 }
 

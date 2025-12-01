@@ -335,10 +335,10 @@ struct EncodeView: View {
                                 viewModel.reset(detector: faceDetector)
                             } label: {
                                 Label("Create Another Message", systemImage: "plus.circle")
-                                    .font(.subheadline)
+                                    .font(.system(size: 20, weight: .semibold))
                                     .foregroundColor(.primary)
                                     .frame(maxWidth: .infinity)
-                                    .padding(.vertical, 12)
+                                    .padding(.vertical, 16)
                             }
                             .buttonStyle(.bordered)
                         }
