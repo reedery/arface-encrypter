@@ -17,6 +17,7 @@ struct AnimatedGIFView: UIViewRepresentable {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
         imageView.clipsToBounds = true
+        imageView.backgroundColor = .clear
 
         // Load and animate GIF
         loadAnimatedGIF(into: imageView, from: url)

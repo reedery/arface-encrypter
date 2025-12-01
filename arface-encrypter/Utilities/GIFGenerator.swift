@@ -99,17 +99,18 @@ class GIFGenerator {
                 throw GIFError.invalidSprite
             }
 
-            // Add frame number overlay
+            // Add overlays: expression name, frame number, and ID (first frame only)
             let frameNumber = index + 1
-            var expressionWithNumber = addFrameNumber(to: expressionSprite, frameNumber: frameNumber)
+            var frameWithOverlays = addExpressionName(to: expressionSprite, expression: expression)
+            frameWithOverlays = addFrameNumber(to: frameWithOverlays, frameNumber: frameNumber)
             
             // Add ID overlay to first expression frame
             if index == 0 {
-                expressionWithNumber = addIDOverlay(to: expressionWithNumber, messageID: messageID)
+                frameWithOverlays = addIDOverlay(to: frameWithOverlays, messageID: messageID)
             }
 
             // Expression frame
-            frames.append(expressionWithNumber)
+            frames.append(frameWithOverlays)
             
             // Frame 1 holds for 1.5s, other frames for 0.7s
             if index == 0 {
@@ -185,6 +186,41 @@ class GIFGenerator {
         return fileURL
     }
 
+    /// Add expression name to bottom left (bottom 10%) of image
+    private static func addExpressionName(to image: UIImage, expression: FaceExpression) -> UIImage {
+        let renderer = UIGraphicsImageRenderer(size: image.size)
+
+        return renderer.image { context in
+            // Draw original image
+            image.draw(in: CGRect(origin: .zero, size: image.size))
+
+            // Configure text - larger, bold font with strong outline
+            let fontSize: CGFloat = 20
+            let attributes: [NSAttributedString.Key: Any] = [
+                .font: UIFont.boldSystemFont(ofSize: fontSize),
+                .foregroundColor: UIColor.white,
+                .strokeColor: UIColor.black,
+                .strokeWidth: -5.0  // Negative for fill + stroke
+            ]
+
+            let text = expression.displayName
+            let attributedText = NSAttributedString(string: text, attributes: attributes)
+
+            // Calculate text position (bottom left, in bottom 10% area)
+            let textSize = attributedText.size()
+            let padding: CGFloat = 12
+            let textRect = CGRect(
+                x: padding,
+                y: image.size.height - textSize.height - padding,
+                width: textSize.width,
+                height: textSize.height
+            )
+
+            // Draw text
+            attributedText.draw(in: textRect)
+        }
+    }
+    
     /// Add frame number to bottom right corner of image
     private static func addFrameNumber(to image: UIImage, frameNumber: Int) -> UIImage {
         let renderer = UIGraphicsImageRenderer(size: image.size)

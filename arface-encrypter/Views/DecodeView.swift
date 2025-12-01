@@ -124,17 +124,6 @@ struct MessageRowView: View {
                 }
             }
             
-            if let expressionList = message.expressionList {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Expression List:")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    Text(expressionList)
-                        .font(.system(.body, design: .monospaced))
-                        .lineLimit(3)
-                        .foregroundStyle(.green)
-                }
-            }
         }
         .padding(.vertical, 4)
     }
