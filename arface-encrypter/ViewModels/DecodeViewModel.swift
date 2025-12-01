@@ -119,6 +119,10 @@ final class DecodeViewModel {
                 print("✅ Message unlocked: \(message.message ?? "")")
                 decodedMessage = message
                 currentDecodingStep = .messageRevealed
+                
+                // Increment decoded count
+                UserSettings().incrementDecodedCount()
+                
                 HapticManager.sequenceComplete()
             } else {
                 // Wrong sequence

@@ -108,6 +108,9 @@ class EncodeViewModel {
             generatedGIFURL = gifURL
             currentStep = .shareGIF
             
+            // Increment encoded count
+            UserSettings().incrementEncodedCount()
+            
             // Success haptic
             HapticManager.sequenceComplete()
             print("✅ Message encoded successfully!")

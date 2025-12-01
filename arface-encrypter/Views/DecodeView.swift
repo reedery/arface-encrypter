@@ -33,8 +33,6 @@ struct DecodeView: View {
     
     private var messageListView: some View {
         VStack(spacing: 20) {
-            Spacer()
-            
             VStack(spacing: 12) {
                 Image(systemName: "lock.open.fill")
                     .font(.system(size: 60))
@@ -50,7 +48,7 @@ struct DecodeView: View {
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
             }
-            .padding(.top, 60)
+            .padding(.top, 40)
             
             Spacer()
             
@@ -81,6 +79,7 @@ struct DecodeView: View {
             
             Spacer()
         }
+        .frame(maxHeight: .infinity, alignment: .top)
     }
     
     // MARK: - Decoding Flow View

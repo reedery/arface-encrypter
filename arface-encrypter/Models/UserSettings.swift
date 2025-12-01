@@ -11,8 +11,22 @@ import SwiftUI
 @Observable
 class UserSettings {
     private static let selectedAvatarKey = "selectedAvatar"
+    private static let encodedCountKey = "encodedCount"
+    private static let decodedCountKey = "decodedCount"
 
     var selectedAvatar: AvatarType {
+        didSet {
+            saveToUserDefaults()
+        }
+    }
+    
+    var encodedCount: Int {
+        didSet {
+            saveToUserDefaults()
+        }
+    }
+    
+    var decodedCount: Int {
         didSet {
             saveToUserDefaults()
         }
@@ -26,9 +40,25 @@ class UserSettings {
         } else {
             self.selectedAvatar = .bear
         }
+        
+        // Load stats from UserDefaults
+        self.encodedCount = UserDefaults.standard.integer(forKey: Self.encodedCountKey)
+        self.decodedCount = UserDefaults.standard.integer(forKey: Self.decodedCountKey)
     }
 
     private func saveToUserDefaults() {
         UserDefaults.standard.set(selectedAvatar.rawValue, forKey: Self.selectedAvatarKey)
+        UserDefaults.standard.set(encodedCount, forKey: Self.encodedCountKey)
+        UserDefaults.standard.set(decodedCount, forKey: Self.decodedCountKey)
+    }
+    
+    /// Increment the encoded messages count
+    func incrementEncodedCount() {
+        encodedCount += 1
+    }
+    
+    /// Increment the decoded messages count
+    func incrementDecodedCount() {
+        decodedCount += 1
     }
 }
