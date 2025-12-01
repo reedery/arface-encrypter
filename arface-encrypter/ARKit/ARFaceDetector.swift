@@ -11,7 +11,14 @@ import Combine
 
 /// Detects facial expressions using ARKit face tracking
 /// Publishes detected expressions and provides real-time blendshape data
-@MainActor
+///
+/// Usage:
+/// ```swift
+/// let detector = ARFaceDetector()
+/// detector.startTracking()
+/// // Observe detector.currentExpression for changes
+/// detector.stopTracking()
+/// ```
 class ARFaceDetector: NSObject, ObservableObject {
 
     // MARK: - Published Properties
@@ -35,14 +42,19 @@ class ARFaceDetector: NSObject, ObservableObject {
     private var lastDetectedExpression: FaceExpression?
     private var lastExpressionTriggerTime: Date?
 
-    // MARK: - Public Methods
+    // MARK: - Lifecycle
 
     override init() {
         super.init()
         session.delegate = self
     }
+    
+    deinit {
+        session.pause()
+    }
 
     /// Start ARKit face tracking
+    @MainActor
     func startTracking() {
         guard ARFaceTrackingConfiguration.isSupported else {
             print("⚠️ ARKit face tracking not supported on this device")
@@ -58,6 +70,7 @@ class ARFaceDetector: NSObject, ObservableObject {
     }
 
     /// Stop ARKit face tracking
+    @MainActor
     func stopTracking() {
         session.pause()
         detectionActive = false
@@ -142,6 +155,7 @@ class ARFaceDetector: NSObject, ObservableObject {
     }
 
     /// Process blendshapes and update published properties
+    @MainActor
     private func processBlendshapes(_ blendshapes: [ARFaceAnchor.BlendShapeLocation: NSNumber]) {
 
         // Update debug blendshapes

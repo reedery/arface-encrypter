@@ -324,18 +324,6 @@ struct GIFTestView: View {
     }
 }
 
-// MARK: - Helper View for Flippable Emojis
-
-/// Displays an emoji with optional horizontal flip for right wink
-struct ExpressionEmojiView: View {
-    let expression: FaceExpression
-
-    var body: some View {
-        Text(expression.emoji)
-            .scaleEffect(x: expression.shouldFlipEmoji ? -1 : 1, y: 1)
-    }
-}
-
 #Preview {
     GIFTestView()
 }

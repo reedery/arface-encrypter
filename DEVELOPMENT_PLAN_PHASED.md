@@ -1,9 +1,11 @@
 # ARFace Encrypter - Phased Development Plan
 
 ## Project Overview
+
 Build a face-expression based message encryption iOS app where users encode messages by performing 5 facial expressions, which generates an animated GIF. Recipients decode by performing the same sequence.
 
 ## Tech Stack
+
 - **iOS:** Swift + SwiftUI
 - **Backend:** Supabase (PostgreSQL)
 - **Face Tracking:** ARKit with ARFaceTrackingConfiguration
@@ -11,16 +13,19 @@ Build a face-expression based message encryption iOS app where users encode mess
 - **Avatar Sprites:** Bear & Fox sprite sheets (768×512px, 6 expressions each)
 
 ## Current State
+
 ✅ Basic app structure with 3 tabs (Encode, Decode, Profile)  
 ✅ Supabase integration configured  
 ✅ Messages table schema defined  
 ✅ DecodeView fetching messages from DB  
-✅ Avatar sprite sheets (Bear & Fox)  
+✅ Avatar sprite sheets (Bear & Fox)
 
 ## Expression Set (6 Total)
+
 From sprite sheets (L→R, top to bottom):
+
 1. **wink_l** - Left wink
-2. **tongue_out** - Tongue sticking out  
+2. **tongue_out** - Tongue sticking out
 3. **surprise** - Eyebrows up, mouth open
 4. **wink_r** - Right wink
 5. **smile** - Big smile/grin
@@ -31,12 +36,14 @@ From sprite sheets (L→R, top to bottom):
 # Development Phases
 
 ## 🔵 PHASE 1: Foundation & Models
+
 **Branch:** `feature/foundation-models`  
 **Time Estimate:** 1-2 hours  
 **Dependencies:** None  
-**Test Before Merge:** Unit tests + Profile view preview  
+**Test Before Merge:** Unit tests + Profile view preview
 
 ### Objectives
+
 - Create all core data models and enums
 - Set up sprite sheet extraction system
 - Add avatar selection to Profile view
@@ -45,6 +52,7 @@ From sprite sheets (L→R, top to bottom):
 ### File Checklist
 
 #### ✅ Create `Models/FaceExpression.swift`
+
 ```swift
 enum FaceExpression: String, CaseIterable, Codable {
     case winkLeft = "wink_l"
@@ -53,24 +61,26 @@ enum FaceExpression: String, CaseIterable, Codable {
     case surprise = "surprise"
     case smile = "smile"
     case smooch = "smooch"
-    
+
     var displayName: String { /* ... */ }
     var emoji: String { /* ... */ }
 }
 ```
 
 #### ✅ Create `Models/AvatarType.swift`
+
 ```swift
 enum AvatarType: String, CaseIterable, Codable {
     case bear = "bear"
     case fox = "fox"
-    
+
     var displayName: String { rawValue.capitalized }
     var spriteSheetName: String { "\(rawValue)-sprite" }
 }
 ```
 
 #### ✅ Create `Models/UserSettings.swift`
+
 ```swift
 @Observable
 class UserSettings {
@@ -79,6 +89,7 @@ class UserSettings {
 ```
 
 #### ✅ Create `Config/FaceDetectionThresholds.swift`
+
 ```swift
 struct FaceDetectionThresholds {
     static let winkLeftEyeClosed: Float = 0.8
@@ -89,6 +100,7 @@ struct FaceDetectionThresholds {
 ```
 
 #### ✅ Create `Utilities/SpriteSheetExtractor.swift`
+
 ```swift
 class SpriteSheetExtractor {
     // Sprite sheet: 768×512px, grid 3×2, each sprite 256×256
@@ -98,7 +110,9 @@ class SpriteSheetExtractor {
 ```
 
 #### ✅ Update `Models/Message.swift`
+
 Add computed property:
+
 ```swift
 var expressions: [FaceExpression]? {
     guard let expressionList = expressionList else { return nil }
@@ -108,12 +122,15 @@ var expressions: [FaceExpression]? {
 ```
 
 #### ✅ Update `Views/ProfileView.swift`
+
 Add:
+
 - Avatar picker (Bear vs Fox)
 - Preview grid showing all 6 extracted sprites
 - User stats section (placeholder for now)
 
 ### Testing Checklist
+
 - [ ] All models compile without errors
 - [ ] `SpriteSheetExtractor` successfully extracts all 6 sprites from both bear and fox sheets
 - [ ] Profile view displays avatar picker
@@ -121,12 +138,15 @@ Add:
 - [ ] UserSettings persists avatar selection across app restarts
 
 ### Success Criteria
+
 ✅ Can switch between Bear and Fox in Profile  
 ✅ Preview grid shows 6 correct extracted expressions  
-✅ No crashes, all types well-defined  
+✅ No crashes, all types well-defined
 
 ### Demo for This Phase
+
 **Video (~30sec):**
+
 1. Open Profile tab
 2. Switch from Bear to Fox
 3. Show preview grid updates with Fox sprites
@@ -135,12 +155,14 @@ Add:
 ---
 
 ## 🟢 PHASE 2: ARKit Face Detection
+
 **Branch:** `feature/arkit-detection`  
 **Time Estimate:** 2-3 hours  
 **Dependencies:** Phase 1 merged  
 **Test Before Merge:** Face detection in isolation (test view)
 
 ### Objectives
+
 - Implement ARKit face tracking
 - Detect all 6 expressions reliably
 - Create standalone test view to verify detection
@@ -149,17 +171,18 @@ Add:
 ### File Checklist
 
 #### ✅ Create `ARKit/ARFaceDetector.swift`
+
 ```swift
 class ARFaceDetector: NSObject, ObservableObject, ARSessionDelegate {
     @Published var currentExpression: FaceExpression?
     @Published var isNeutral: Bool = true
     @Published var detectionActive: Bool = false
     @Published var debugBlendshapes: [String: Float] = [:]
-    
+
     private let session = ARSession()
     private var expressionStartTime: Date?
     private var lastDetectedExpression: FaceExpression?
-    
+
     func startTracking()
     func stopTracking()
     func detectExpression(from blendshapes: [...]) -> FaceExpression?
@@ -168,6 +191,7 @@ class ARFaceDetector: NSObject, ObservableObject, ARSessionDelegate {
 ```
 
 **Detection Logic:**
+
 ```swift
 // Priority order (check most specific first):
 1. tongueOut > 0.3 → .tongueOut
@@ -179,15 +203,17 @@ class ARFaceDetector: NSObject, ObservableObject, ARSessionDelegate {
 ```
 
 **Debouncing:**
+
 - Must hold expression for 0.4s before triggering
 - Must return to neutral (all values < 0.3) between expressions
 
 #### ✅ Create `Views/Components/ARFaceTrackingView.swift`
+
 ```swift
 struct ARFaceTrackingView: UIViewRepresentable {
     @Binding var detectedExpression: FaceExpression?
     let showDebugOverlay: Bool
-    
+
     // Wraps ARSCNView
     // Shows live camera feed
     // Optional: face mesh overlay
@@ -196,23 +222,24 @@ struct ARFaceTrackingView: UIViewRepresentable {
 ```
 
 #### ✅ Create `Views/FaceDetectionTestView.swift` (Temporary)
+
 ```swift
 struct FaceDetectionTestView: View {
     @StateObject var detector = ARFaceDetector()
-    
+
     var body: some View {
         VStack {
             ARFaceTrackingView(
                 detectedExpression: $detector.currentExpression,
                 showDebugOverlay: true
             )
-            
+
             // Show detected expression
             if let expr = detector.currentExpression {
                 Text("Detected: \(expr.displayName) \(expr.emoji)")
                     .font(.largeTitle)
             }
-            
+
             // Show raw blendshape values for tuning
             List {
                 ForEach(detector.debugBlendshapes.sorted(by: { $0.key < $1.key }), id: \.key) { key, value in
@@ -232,6 +259,7 @@ struct FaceDetectionTestView: View {
 ```
 
 #### ✅ Add Test Tab to ContentView (Temporarily)
+
 ```swift
 TabView {
     // ... existing tabs
@@ -241,6 +269,7 @@ TabView {
 ```
 
 ### Testing Checklist
+
 - [ ] Camera permission requested correctly
 - [ ] ARKit session starts without errors
 - [ ] Can detect all 6 expressions:
@@ -256,19 +285,24 @@ TabView {
 - [ ] No false positives during normal talking/movement
 
 ### Threshold Tuning
+
 Use `FaceDetectionTestView` to:
+
 1. Perform each expression
 2. Check debug blendshape values
 3. Adjust thresholds in `FaceDetectionThresholds.swift`
 4. Test again until reliable
 
 ### Success Criteria
+
 ✅ Can reliably detect all 6 expressions  
 ✅ Minimal false positives  
-✅ Smooth tracking at 30+ fps  
+✅ Smooth tracking at 30+ fps
 
 ### Demo for This Phase
+
 **Video (~1min):**
+
 1. Open Test tab
 2. Perform each of 6 expressions slowly
 3. Show detection triggering (with haptic feedback)
@@ -278,12 +312,14 @@ Use `FaceDetectionTestView` to:
 ---
 
 ## 🟡 PHASE 3: Expression Recording & GIF Generation
+
 **Branch:** `feature/gif-generation`  
 **Time Estimate:** 2-3 hours  
 **Dependencies:** Phase 1 & 2 merged  
 **Test Before Merge:** Can record 5 expressions and generate GIF
 
 ### Objectives
+
 - Build expression sequence recorder
 - Generate animated GIF from sequence
 - Test in isolation (no database yet)
@@ -292,19 +328,20 @@ Use `FaceDetectionTestView` to:
 ### File Checklist
 
 #### ✅ Create `Managers/ExpressionRecorder.swift`
+
 ```swift
 @Observable
 class ExpressionRecorder {
     var recordedExpressions: [FaceExpression] = []
     var isRecording: Bool = false
-    
+
     var currentStep: Int { recordedExpressions.count }
     var isComplete: Bool { recordedExpressions.count >= 5 }
-    
+
     func startRecording()
     func recordExpression(_ expression: FaceExpression) -> Bool // Returns true if recorded
     func reset()
-    
+
     func getExpressionHash() -> String {
         // Returns: "wink_l,tongue_out,surprise,smile,smooch"
         recordedExpressions.map(\.rawValue).joined(separator: ",")
@@ -313,6 +350,7 @@ class ExpressionRecorder {
 ```
 
 #### ✅ Create `Utilities/GIFGenerator.swift`
+
 ```swift
 class GIFGenerator {
     static func generateGIF(
@@ -322,34 +360,34 @@ class GIFGenerator {
     ) async throws -> URL {
         // 1. Extract sprites from sprite sheet
         let sprites = SpriteSheetExtractor.extractAllSprites(from: avatar)
-        
+
         // 2. Build frame sequence
         var frames: [UIImage] = []
-        
+
         // Use wink_l as "neutral" between expressions
         let neutralSprite = sprites[.winkLeft]!
-        
+
         frames.append(neutralSprite) // Start neutral (0.5s)
-        
+
         for expression in expressions {
             frames.append(sprites[expression]!) // Expression (0.5s)
             frames.append(neutralSprite)         // Back to neutral (0.3s)
         }
-        
+
         // 3. Add message ID overlay to last frame
         let lastFrameWithID = addTextOverlay(to: frames.last!, text: "ID:\(messageID)")
         frames[frames.count - 1] = lastFrameWithID
-        
+
         // 4. Generate GIF using ImageIO
         return try await createGIF(from: frames, frameDurations: [...])
     }
-    
+
     private static func createGIF(from images: [UIImage], frameDurations: [TimeInterval]) async throws -> URL {
         // Use CGImageDestination to create GIF
         // Save to temp directory
         // Return file URL
     }
-    
+
     private static func addTextOverlay(to image: UIImage, text: String) -> UIImage {
         // Draw text in top-left corner (small, white with black stroke)
     }
@@ -357,6 +395,7 @@ class GIFGenerator {
 ```
 
 **Frame timing:**
+
 ```swift
 let frameDurations: [TimeInterval] = [
     0.5,  // neutral start
@@ -369,6 +408,7 @@ let frameDurations: [TimeInterval] = [
 ```
 
 #### ✅ Create `Utilities/MessageIDExtractor.swift`
+
 ```swift
 class MessageIDExtractor {
     static func extractMessageID(from gifURL: URL) async -> String? {
@@ -376,7 +416,7 @@ class MessageIDExtractor {
         // Option 2: Check GIF metadata comments
         // Return extracted ID or nil
     }
-    
+
     private static func extractTextFromImage(_ image: UIImage) async -> String? {
         // Use VNRecognizeTextRequest from Vision framework
     }
@@ -384,6 +424,7 @@ class MessageIDExtractor {
 ```
 
 #### ✅ Create `Views/GIFTestView.swift` (Temporary)
+
 ```swift
 struct GIFTestView: View {
     @StateObject var detector = ARFaceDetector()
@@ -391,18 +432,18 @@ struct GIFTestView: View {
     @State var generatedGIFURL: URL?
     @State var isGenerating = false
     @State var userSettings = UserSettings()
-    
+
     var body: some View {
         VStack {
             if recorder.isComplete {
                 // Show recorded expressions
                 Text("Recorded: \(recorder.getExpressionHash())")
-                
+
                 if let gifURL = generatedGIFURL {
                     // Show generated GIF
                     AnimatedGIFView(url: gifURL)
                         .frame(height: 300)
-                    
+
                     ShareLink(item: gifURL) {
                         Label("Share GIF", systemImage: "square.and.arrow.up")
                     }
@@ -424,7 +465,7 @@ struct GIFTestView: View {
                     }
                     .disabled(isGenerating)
                 }
-                
+
                 Button("Reset") {
                     recorder.reset()
                     generatedGIFURL = nil
@@ -434,10 +475,10 @@ struct GIFTestView: View {
                     detectedExpression: $detector.currentExpression,
                     showDebugOverlay: false
                 )
-                
+
                 Text("Record expression \(recorder.currentStep + 1) of 5")
                     .font(.headline)
-                
+
                 // Show recorded so far
                 HStack {
                     ForEach(recorder.recordedExpressions, id: \.self) { expr in
@@ -463,27 +504,29 @@ struct GIFTestView: View {
 ```
 
 #### ✅ Create `Views/Components/AnimatedGIFView.swift`
+
 ```swift
 struct AnimatedGIFView: UIViewRepresentable {
     let url: URL
-    
+
     func makeUIView(context: Context) -> UIImageView {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
-        
+
         if let data = try? Data(contentsOf: url),
            let source = CGImageSourceCreateWithData(data as CFData, nil) {
             // Animate GIF frames
         }
-        
+
         return imageView
     }
-    
+
     func updateUIView(_ uiView: UIImageView, context: Context) {}
 }
 ```
 
 ### Testing Checklist
+
 - [ ] Can record 5 expressions in sequence
 - [ ] Expression recorder prevents duplicates in a row
 - [ ] Expression hash format correct: "expr1,expr2,expr3,expr4,expr5"
@@ -496,12 +539,15 @@ struct AnimatedGIFView: UIViewRepresentable {
 - [ ] Can share GIF via share sheet
 
 ### Success Criteria
+
 ✅ Record 5 expressions → Generate GIF → Share  
 ✅ GIF plays correctly in Photos app  
-✅ Message ID readable in last frame  
+✅ Message ID readable in last frame
 
 ### Demo for This Phase
+
 **Video (~1min):**
+
 1. Open GIF Test view
 2. Perform 5 expressions (smile, wink_l, tongue_out, surprise, smooch)
 3. Show checkmarks as each recorded
@@ -513,12 +559,14 @@ struct AnimatedGIFView: UIViewRepresentable {
 ---
 
 ## 🟠 PHASE 4: Encode Flow
+
 **Branch:** `feature/encode-flow`  
 **Time Estimate:** 2-3 hours  
 **Dependencies:** Phases 1-3 merged  
 **Test Before Merge:** Full encode flow with database
 
 ### Objectives
+
 - Build complete encoding UI flow
 - Integrate with Supabase database
 - Generate and save messages
@@ -527,11 +575,12 @@ struct AnimatedGIFView: UIViewRepresentable {
 ### File Checklist
 
 #### ✅ Create `Services/MessageService.swift`
+
 ```swift
 class MessageService {
     static let shared = MessageService()
     private let client = SupabaseConfig.shared.client
-    
+
     func createMessage(
         expressionHash: String,
         message: String,
@@ -548,10 +597,10 @@ class MessageService {
             .single()
             .execute()
             .value
-        
+
         return newMessage
     }
-    
+
     func fetchMessage(byHash hash: String) async throws -> Message? {
         try await client
             .from("messages")
@@ -561,7 +610,7 @@ class MessageService {
             .execute()
             .value
     }
-    
+
     func fetchAllMessages() async throws -> [Message] {
         try await client
             .from("messages")
@@ -574,6 +623,7 @@ class MessageService {
 ```
 
 #### ✅ Create `ViewModels/EncodeViewModel.swift`
+
 ```swift
 @Observable
 class EncodeViewModel {
@@ -584,7 +634,7 @@ class EncodeViewModel {
     var isGenerating = false
     var errorMessage: String?
     var createdMessage: Message?
-    
+
     enum EncodingStep {
         case enterMessage
         case recordExpressions
@@ -592,19 +642,19 @@ class EncodeViewModel {
         case shareGIF
     }
     var currentStep: EncodingStep = .enterMessage
-    
+
     func startExpressionRecording() {
         currentStep = .recordExpressions
         faceDetector.startTracking()
         expressionRecorder.startRecording()
     }
-    
+
     func handleDetectedExpression(_ expression: FaceExpression) {
         guard currentStep == .recordExpressions else { return }
-        
+
         if expressionRecorder.recordExpression(expression) {
             HapticManager.expressionDetected()
-            
+
             if expressionRecorder.isComplete {
                 Task {
                     await generateAndUploadMessage()
@@ -612,12 +662,12 @@ class EncodeViewModel {
             }
         }
     }
-    
+
     func generateAndUploadMessage() async {
         currentStep = .generatingGIF
         isGenerating = true
         faceDetector.stopTracking()
-        
+
         do {
             // 1. Create message in database
             let hash = expressionRecorder.getExpressionHash()
@@ -626,26 +676,26 @@ class EncodeViewModel {
                 message: messageText,
                 expressionList: hash
             )
-            
+
             // 2. Generate GIF with message ID
             let gifURL = try await GIFGenerator.generateGIF(
                 expressions: expressionRecorder.recordedExpressions,
                 avatar: UserSettings().selectedAvatar,
                 messageID: "\(createdMessage!.id)"
             )
-            
+
             generatedGIFURL = gifURL
             currentStep = .shareGIF
             HapticManager.sequenceComplete()
-            
+
         } catch {
             errorMessage = error.localizedDescription
             currentStep = .enterMessage
         }
-        
+
         isGenerating = false
     }
-    
+
     func reset() {
         messageText = ""
         expressionRecorder.reset()
@@ -659,16 +709,17 @@ class EncodeViewModel {
 ```
 
 #### ✅ Create `Utilities/HapticManager.swift`
+
 ```swift
 class HapticManager {
     static func expressionDetected() {
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
     }
-    
+
     static func sequenceComplete() {
         UINotificationFeedbackGenerator().notificationOccurred(.success)
     }
-    
+
     static func error() {
         UINotificationFeedbackGenerator().notificationOccurred(.error)
     }
@@ -676,11 +727,12 @@ class HapticManager {
 ```
 
 #### ✅ Update `Views/EncodeView.swift`
+
 ```swift
 struct EncodeView: View {
     @State private var viewModel = EncodeViewModel()
     @State private var userSettings = UserSettings()
-    
+
     var body: some View {
         NavigationStack {
             Group {
@@ -705,23 +757,23 @@ struct EncodeView: View {
             }
         }
     }
-    
+
     private var messageInputView: some View {
         VStack(spacing: 20) {
             Text("Write a Secret Message ✏️")
                 .font(.title2)
                 .fontWeight(.semibold)
-            
+
             TextField("Type your message", text: $viewModel.messageText, axis: .vertical)
                 .textFieldStyle(.roundedBorder)
                 .lineLimit(3...6)
                 .padding()
-            
+
             Text("\(viewModel.messageText.count)/100")
                 .font(.caption)
                 .foregroundStyle(viewModel.messageText.count > 100 ? .red : .secondary)
-            
-            Button("Lock Message with Facial Expressions 🔒") {
+
+            Button("Lock Message with Face") {
                 viewModel.startExpressionRecording()
             }
             .buttonStyle(.borderedProminent)
@@ -729,7 +781,7 @@ struct EncodeView: View {
         }
         .padding()
     }
-    
+
     private var expressionRecordingView: some View {
         VStack {
             ARFaceTrackingView(
@@ -746,7 +798,7 @@ struct EncodeView: View {
                 }
                 .padding()
             }
-            
+
             // Progress indicator
             HStack(spacing: 12) {
                 ForEach(0..<5, id: \.self) { index in
@@ -768,7 +820,7 @@ struct EncodeView: View {
             }
         }
     }
-    
+
     private var generatingView: some View {
         VStack(spacing: 20) {
             ProgressView()
@@ -777,30 +829,30 @@ struct EncodeView: View {
                 .font(.headline)
         }
     }
-    
+
     private var shareGIFView: some View {
         VStack(spacing: 20) {
             Text("Message Locked! 🎉")
                 .font(.title)
                 .fontWeight(.bold)
-            
+
             if let gifURL = viewModel.generatedGIFURL {
                 AnimatedGIFView(url: gifURL)
                     .frame(height: 300)
                     .cornerRadius(12)
-                
+
                 if let message = viewModel.createdMessage {
                     Text("Message ID: \(message.id)")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
-                
+
                 ShareLink(item: gifURL, preview: SharePreview("Secret Message", image: Image(systemName: "lock.fill"))) {
                     Label("Share GIF", systemImage: "square.and.arrow.up")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
-                
+
                 Button("Create Another") {
                     viewModel.reset()
                 }
@@ -813,6 +865,7 @@ struct EncodeView: View {
 ```
 
 ### Testing Checklist
+
 - [ ] Can enter message text
 - [ ] Character counter works (max 100)
 - [ ] Can't proceed with empty message
@@ -833,12 +886,15 @@ struct EncodeView: View {
   - [ ] GIF generation failure
 
 ### Success Criteria
+
 ✅ Complete encode flow works end-to-end  
 ✅ Message saved to database  
-✅ GIF shareable outside app  
+✅ GIF shareable outside app
 
 ### Demo for This Phase
+
 **Video (~1.5min):**
+
 1. Open Encode tab
 2. Type message: "Hey wanna play roblox later? im eating pizza rn 🍕"
 3. Tap "Lock Message"
@@ -851,12 +907,14 @@ struct EncodeView: View {
 ---
 
 ## 🔴 PHASE 5: Decode Flow
+
 **Branch:** `feature/decode-flow`  
 **Time Estimate:** 2-3 hours  
 **Dependencies:** Phases 1-4 merged  
 **Test Before Merge:** Full decode flow with correct/incorrect sequences
 
 ### Objectives
+
 - Build complete decoding UI flow
 - Import GIF and extract message ID
 - Perform expression sequence to unlock
@@ -866,6 +924,7 @@ struct EncodeView: View {
 ### File Checklist
 
 #### ✅ Update `ViewModels/DecodeViewModel.swift`
+
 ```swift
 @Observable
 class DecodeViewModel {
@@ -873,7 +932,7 @@ class DecodeViewModel {
     var messages: [Message] = []
     var isLoading = false
     var errorMessage: String?
-    
+
     // New: decoding flow
     var isDecoding = false
     var decodingRecorder = ExpressionRecorder()
@@ -882,7 +941,7 @@ class DecodeViewModel {
     var extractedMessageID: String?
     var decodedMessage: Message?
     var attemptError: String?
-    
+
     enum DecodingStep {
         case selectGIF
         case performExpressions
@@ -891,13 +950,13 @@ class DecodeViewModel {
         case incorrectSequence
     }
     var currentDecodingStep: DecodingStep = .selectGIF
-    
+
     func fetchMessages() async { /* existing */ }
-    
+
     func selectGIF(url: URL) async {
         selectedGIFURL = url
         extractedMessageID = await MessageIDExtractor.extractMessageID(from: url)
-        
+
         if extractedMessageID != nil {
             currentDecodingStep = .performExpressions
             decodingDetector.startTracking()
@@ -906,13 +965,13 @@ class DecodeViewModel {
             attemptError = "Could not read message ID from GIF"
         }
     }
-    
+
     func handleDecodingExpression(_ expression: FaceExpression) {
         guard currentDecodingStep == .performExpressions else { return }
-        
+
         if decodingRecorder.recordExpression(expression) {
             HapticManager.expressionDetected()
-            
+
             if decodingRecorder.isComplete {
                 Task {
                     await validateSequence()
@@ -920,14 +979,14 @@ class DecodeViewModel {
             }
         }
     }
-    
+
     func validateSequence() async {
         currentDecodingStep = .validating
         decodingDetector.stopTracking()
-        
+
         do {
             let attemptedHash = decodingRecorder.getExpressionHash()
-            
+
             if let message = try await MessageService.shared.fetchMessage(byHash: attemptedHash) {
                 // Success!
                 decodedMessage = message
@@ -945,7 +1004,7 @@ class DecodeViewModel {
             HapticManager.error()
         }
     }
-    
+
     func resetDecoding() {
         isDecoding = false
         decodingRecorder.reset()
@@ -960,11 +1019,12 @@ class DecodeViewModel {
 ```
 
 #### ✅ Update `Views/DecodeView.swift`
+
 ```swift
 struct DecodeView: View {
     @State private var viewModel = DecodeViewModel()
     @State private var showingImagePicker = false
-    
+
     var body: some View {
         NavigationStack {
             if viewModel.isDecoding {
@@ -974,7 +1034,7 @@ struct DecodeView: View {
             }
         }
     }
-    
+
     private var messageListView: some View {
         VStack {
             Button {
@@ -985,7 +1045,7 @@ struct DecodeView: View {
             }
             .buttonStyle(.borderedProminent)
             .padding()
-            
+
             // Existing message list
             if viewModel.isLoading {
                 ProgressView("Loading messages...")
@@ -1017,7 +1077,7 @@ struct DecodeView: View {
             }
         }
     }
-    
+
     private var decodingFlowView: some View {
         Group {
             switch viewModel.currentDecodingStep {
@@ -1041,7 +1101,7 @@ struct DecodeView: View {
             }
         }
     }
-    
+
     private var performExpressionsView: some View {
         VStack {
             // Show GIF playing (as hint)
@@ -1050,16 +1110,16 @@ struct DecodeView: View {
                     Text("Watch the GIF to learn the sequence")
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                    
+
                     AnimatedGIFView(url: gifURL)
                         .frame(height: 150)
                         .cornerRadius(8)
                 }
                 .padding()
             }
-            
+
             Divider()
-            
+
             // Camera for performing sequence
             ARFaceTrackingView(
                 detectedExpression: $viewModel.decodingDetector.currentExpression,
@@ -1073,7 +1133,7 @@ struct DecodeView: View {
                     .cornerRadius(8)
                     .padding()
             }
-            
+
             // Progress
             HStack(spacing: 12) {
                 ForEach(0..<5, id: \.self) { index in
@@ -1095,7 +1155,7 @@ struct DecodeView: View {
             }
         }
     }
-    
+
     private var validatingView: some View {
         VStack(spacing: 20) {
             ProgressView()
@@ -1104,13 +1164,13 @@ struct DecodeView: View {
                 .font(.headline)
         }
     }
-    
+
     private var messageRevealedView: some View {
         VStack(spacing: 20) {
             Text("🎉 Message Unlocked!")
                 .font(.largeTitle)
                 .fontWeight(.bold)
-            
+
             if let message = viewModel.decodedMessage {
                 Text(message.message ?? "")
                     .font(.title3)
@@ -1120,7 +1180,7 @@ struct DecodeView: View {
                     .cornerRadius(12)
                     .transition(.scale.combined(with: .opacity))
             }
-            
+
             Button("Done") {
                 viewModel.resetDecoding()
             }
@@ -1128,23 +1188,23 @@ struct DecodeView: View {
         }
         .padding()
     }
-    
+
     private var incorrectSequenceView: some View {
         VStack(spacing: 20) {
             Image(systemName: "xmark.circle.fill")
                 .font(.system(size: 60))
                 .foregroundStyle(.red)
-            
+
             Text("Incorrect Sequence")
                 .font(.title2)
                 .fontWeight(.bold)
-            
+
             if let error = viewModel.attemptError {
                 Text(error)
                     .multilineTextAlignment(.center)
                     .foregroundStyle(.secondary)
             }
-            
+
             HStack(spacing: 16) {
                 Button("Try Again") {
                     viewModel.decodingRecorder.reset()
@@ -1153,7 +1213,7 @@ struct DecodeView: View {
                     viewModel.decodingRecorder.startRecording()
                 }
                 .buttonStyle(.borderedProminent)
-                
+
                 Button("Cancel") {
                     viewModel.resetDecoding()
                 }
@@ -1166,48 +1226,49 @@ struct DecodeView: View {
 ```
 
 #### ✅ Create `Views/Components/ImagePicker.swift`
+
 ```swift
 import PhotosUI
 import SwiftUI
 
 struct ImagePicker: UIViewControllerRepresentable {
     let onSelect: (URL) -> Void
-    
+
     func makeUIViewController(context: Context) -> PHPickerViewController {
         var config = PHPickerConfiguration()
         config.filter = .images
         config.selectionLimit = 1
-        
+
         let picker = PHPickerViewController(configuration: config)
         picker.delegate = context.coordinator
         return picker
     }
-    
+
     func updateUIViewController(_ uiViewController: PHPickerViewController, context: Context) {}
-    
+
     func makeCoordinator() -> Coordinator {
         Coordinator(onSelect: onSelect)
     }
-    
+
     class Coordinator: NSObject, PHPickerViewControllerDelegate {
         let onSelect: (URL) -> Void
-        
+
         init(onSelect: @escaping (URL) -> Void) {
             self.onSelect = onSelect
         }
-        
+
         func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
             picker.dismiss(animated: true)
-            
+
             guard let provider = results.first?.itemProvider else { return }
-            
+
             if provider.hasItemConformingToTypeIdentifier(UTType.gif.identifier) {
                 provider.loadFileRepresentation(forTypeIdentifier: UTType.gif.identifier) { url, error in
                     if let url = url {
                         // Copy to temp location
                         let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString + ".gif")
                         try? FileManager.default.copyItem(at: url, to: tempURL)
-                        
+
                         DispatchQueue.main.async {
                             self.onSelect(tempURL)
                         }
@@ -1220,6 +1281,7 @@ struct ImagePicker: UIViewControllerRepresentable {
 ```
 
 ### Testing Checklist
+
 - [ ] Can tap "Decode a New GIF"
 - [ ] Photo picker opens
 - [ ] Can select a GIF from library
@@ -1238,17 +1300,21 @@ struct ImagePicker: UIViewControllerRepresentable {
 - [ ] Refresh still works
 
 ### Edge Cases
+
 - [ ] GIF without message ID → error message
 - [ ] Network offline during validation → error
 - [ ] Camera permission denied → show settings alert
 
 ### Success Criteria
+
 ✅ Complete decode flow works end-to-end  
 ✅ Correct sequence unlocks message  
-✅ Wrong sequence shows helpful error  
+✅ Wrong sequence shows helpful error
 
 ### Demo for This Phase
+
 **Video (~2min):**
+
 1. Open Decode tab
 2. Tap "Decode a New GIF"
 3. Select the GIF from Phase 4 demo
@@ -1264,12 +1330,14 @@ struct ImagePicker: UIViewControllerRepresentable {
 ---
 
 ## 🟣 PHASE 6: Polish & Final Integration
+
 **Branch:** `feature/polish`  
 **Time Estimate:** 1-2 hours  
 **Dependencies:** Phases 1-5 merged  
 **Test Before Merge:** Full app testing, all flows
 
 ### Objectives
+
 - Remove test views
 - Add animations and polish
 - Improve error handling
@@ -1280,6 +1348,7 @@ struct ImagePicker: UIViewControllerRepresentable {
 ### File Checklist
 
 #### ✅ Remove Temporary Views
+
 - [ ] Delete `Views/FaceDetectionTestView.swift`
 - [ ] Delete `Views/GIFTestView.swift`
 - [ ] Remove test tab from `ContentView.swift`
@@ -1287,21 +1356,25 @@ struct ImagePicker: UIViewControllerRepresentable {
 #### ✅ Add Visual Polish
 
 **EncodeView:**
+
 - [ ] Add confetti animation when GIF generated (using SwiftUI)
 - [ ] Smooth transitions between steps
 - [ ] Better progress visualization
 - [ ] Loading shimmer during GIF generation
 
 **DecodeView:**
+
 - [ ] Add particle burst animation on message reveal
 - [ ] Smooth entrance animation for revealed message
 - [ ] Better error state visuals
 
 **ProfileView:**
+
 - [ ] Add subtle animation when switching avatars
 - [ ] Polish sprite preview grid
 
 #### ✅ Improve Error Handling
+
 ```swift
 // Add to EncodeViewModel & DecodeViewModel
 private func handleError(_ error: Error) {
@@ -1317,23 +1390,25 @@ private func handleError(_ error: Error) {
     } else {
         errorMessage = error.localizedDescription
     }
-    
+
     HapticManager.error()
 }
 ```
 
 #### ✅ Add Loading States
+
 - [ ] Skeleton screens while fetching messages
 - [ ] Better progress indicators with estimated time
 - [ ] Disable buttons during async operations
 
 #### ✅ Add Permission Handling
+
 ```swift
 // Create Utilities/PermissionManager.swift
 class PermissionManager {
     static func checkCameraPermission() async -> Bool {
         let status = AVCaptureDevice.authorizationStatus(for: .video)
-        
+
         switch status {
         case .authorized:
             return true
@@ -1343,7 +1418,7 @@ class PermissionManager {
             return false
         }
     }
-    
+
     static func showSettingsAlert() {
         // Show alert with button to open Settings
     }
@@ -1351,11 +1426,13 @@ class PermissionManager {
 ```
 
 #### ✅ Add Onboarding (Optional)
+
 - [ ] First-time user tutorial
 - [ ] Show how to perform each expression
 - [ ] Explain encode/decode flow
 
 #### ✅ Code Cleanup
+
 - [ ] Remove debug print statements
 - [ ] Add proper logging
 - [ ] Document complex functions
@@ -1364,7 +1441,9 @@ class PermissionManager {
 ### Testing Checklist
 
 #### Full Flow Tests
+
 - [ ] **Encode Flow:**
+
   1. Enter message
   2. Record 5 expressions
   3. GIF generates
@@ -1373,6 +1452,7 @@ class PermissionManager {
   6. Reset works
 
 - [ ] **Decode Flow:**
+
   1. Import GIF
   2. Message ID extracted
   3. Perform correct sequence
@@ -1386,6 +1466,7 @@ class PermissionManager {
   3. Encoded GIFs use selected avatar
 
 #### Edge Cases
+
 - [ ] App works offline (except DB operations)
 - [ ] Camera permission denied → helpful message
 - [ ] Photos permission denied → helpful message
@@ -1396,6 +1477,7 @@ class PermissionManager {
 - [ ] Message too long (>100 chars) blocked
 
 #### Performance
+
 - [ ] App launches quickly
 - [ ] ARKit tracking smooth (30+ fps)
 - [ ] GIF generation <5 seconds
@@ -1404,6 +1486,7 @@ class PermissionManager {
 - [ ] No crashes during normal usage
 
 #### UI/UX
+
 - [ ] All text readable
 - [ ] Buttons have appropriate sizes
 - [ ] Safe area respected
@@ -1413,19 +1496,23 @@ class PermissionManager {
 - [ ] Loading indicators clear
 
 ### Success Criteria
+
 ✅ App feels polished and professional  
 ✅ All flows work smoothly  
 ✅ No critical bugs  
-✅ Ready for demo video  
+✅ Ready for demo video
 
 ### Final Demo Video Script
+
 **Total: 3 minutes**
 
 **Intro (15s):**
+
 - "ARFace Encrypter - Secure messages with facial expressions"
 - Show app icon and opening screen
 
 **Encode Flow (1min):**
+
 1. Open Encode tab
 2. Type: "Hey wanna play roblox later? im eating pizza rn 🍕"
 3. Show character counter
@@ -1436,6 +1523,7 @@ class PermissionManager {
 8. Share via Messages
 
 **Decode Flow (1min):**
+
 1. Open Decode tab
 2. Tap "Decode a New GIF"
 3. Select the shared GIF
@@ -1445,6 +1533,7 @@ class PermissionManager {
 7. Read decrypted message
 
 **Wrong Sequence (30s):**
+
 1. Import another GIF
 2. Perform WRONG sequence
 3. Show error message
@@ -1452,6 +1541,7 @@ class PermissionManager {
 5. Perform correct sequence → success
 
 **Profile & Features (30s):**
+
 1. Show Profile tab
 2. Switch from Bear to Fox
 3. Show sprite preview grid
@@ -1485,6 +1575,7 @@ main
 ```
 
 ### Merge Checklist (for each phase)
+
 - [ ] All tests passing
 - [ ] Code reviewed
 - [ ] No console errors
@@ -1496,18 +1587,20 @@ main
 
 ## Time Breakdown
 
-| Phase | Time Estimate | Critical Path |
-|-------|---------------|---------------|
-| Phase 1: Foundation | 1-2 hours | ✅ Must have |
-| Phase 2: ARKit | 2-3 hours | ✅ Must have |
-| Phase 3: GIF Gen | 2-3 hours | ✅ Must have |
-| Phase 4: Encode | 2-3 hours | ✅ Must have |
-| Phase 5: Decode | 2-3 hours | ✅ Must have |
-| Phase 6: Polish | 1-2 hours | ⚠️ Nice to have |
-| **TOTAL** | **10-16 hours** | **Core: 9-14 hours** |
+| Phase               | Time Estimate   | Critical Path        |
+| ------------------- | --------------- | -------------------- |
+| Phase 1: Foundation | 1-2 hours       | ✅ Must have         |
+| Phase 2: ARKit      | 2-3 hours       | ✅ Must have         |
+| Phase 3: GIF Gen    | 2-3 hours       | ✅ Must have         |
+| Phase 4: Encode     | 2-3 hours       | ✅ Must have         |
+| Phase 5: Decode     | 2-3 hours       | ✅ Must have         |
+| Phase 6: Polish     | 1-2 hours       | ⚠️ Nice to have      |
+| **TOTAL**           | **10-16 hours** | **Core: 9-14 hours** |
 
 ### Minimum Viable Demo (4 hours)
+
 If time is very limited:
+
 1. **Phase 1** (1 hour)
 2. **Phase 2** (1.5 hours)
 3. **Phase 3** (1 hour)
@@ -1516,9 +1609,11 @@ If time is very limited:
 This gives you: models + face detection + GIF generation + basic encoding flow.
 
 ### Full Feature Set (8-10 hours)
+
 Phases 1-5 complete. Skip Phase 6 polish if time-constrained.
 
 ### Production Ready (14-16 hours)
+
 All 6 phases complete with polish and thorough testing.
 
 ---
@@ -1526,6 +1621,7 @@ All 6 phases complete with polish and thorough testing.
 ## Success Metrics
 
 ### Technical
+
 - ✅ All 6 expressions detected reliably
 - ✅ GIF generation <5 seconds
 - ✅ Database operations successful
@@ -1533,6 +1629,7 @@ All 6 phases complete with polish and thorough testing.
 - ✅ ARKit tracking smooth (30+ fps)
 
 ### UX
+
 - ✅ Expression detection feels responsive
 - ✅ Visual feedback is clear
 - ✅ Error messages are helpful
@@ -1540,6 +1637,7 @@ All 6 phases complete with polish and thorough testing.
 - ✅ App feels polished
 
 ### Demo Quality
+
 - ✅ 3-minute video shows all features
 - ✅ Encode → Share → Decode works perfectly
 - ✅ Wrong sequence error handled well
@@ -1551,17 +1649,21 @@ All 6 phases complete with polish and thorough testing.
 ## Risk Mitigation
 
 ### High Risk Items
+
 1. **ARKit face detection accuracy**
+
    - Mitigation: Phase 2 dedicated to tuning thresholds
    - Test view for isolated testing
    - Adjustable thresholds in config file
 
 2. **GIF generation complexity**
+
    - Mitigation: Use native ImageIO (no external deps)
    - Test in Phase 3 before integration
    - Fallback: simpler frame timing if needed
 
 3. **Message ID extraction from GIF**
+
    - Mitigation: Text overlay is simple, high-contrast
    - Vision OCR is reliable for printed text
    - Fallback: GIF metadata if OCR fails
@@ -1572,6 +1674,7 @@ All 6 phases complete with polish and thorough testing.
    - Each phase independently testable
 
 ### Medium Risk Items
+
 1. Sprite sheet extraction
 2. Database unique constraint violations
 3. Camera permissions on real device
@@ -1582,16 +1685,19 @@ All 6 phases complete with polish and thorough testing.
 ## Next Steps
 
 1. **Choose your timeline:**
+
    - 4 hours → Phases 1-3 + basic encode
    - 8 hours → Phases 1-5 (full features, minimal polish)
    - 14 hours → All 6 phases (production ready)
 
 2. **Start with Phase 1:**
+
    ```bash
    git checkout -b feature/foundation-models
    ```
 
 3. **Follow phase checklist:**
+
    - Complete all files in checklist
    - Test locally
    - Create demo video for phase
