@@ -12,6 +12,7 @@ import SwiftUI
 struct FaceDetectionTestView: View {
     @StateObject private var detector = ARFaceDetector()
     @State private var showDebugOverlay = true
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         NavigationStack {
@@ -101,13 +102,40 @@ struct FaceDetectionTestView: View {
                                 .font(.headline)
                                 .padding(.vertical, 8)
 
-                            // Filter to show only relevant blendshapes
+                            // Expanded list of blendshapes for tuning
                             let relevantKeys = [
+                                // Eyes
                                 "eyeBlinkLeft", "eyeBlinkRight",
-                                "tongueOut",
-                                "jawOpen", "browInnerUp",
+                                "eyeLookDownLeft", "eyeLookDownRight",
+                                "eyeLookInLeft", "eyeLookInRight",
+                                "eyeLookOutLeft", "eyeLookOutRight",
+                                "eyeLookUpLeft", "eyeLookUpRight",
+                                "eyeSquintLeft", "eyeSquintRight",
+                                "eyeWideLeft", "eyeWideRight",
+                                // Brows
+                                "browDownLeft", "browDownRight",
+                                "browInnerUp",
+                                "browOuterUpLeft", "browOuterUpRight",
+                                // Jaw & Mouth
+                                "jawOpen", "jawForward", "jawLeft", "jawRight",
+                                "mouthClose",
+                                "mouthFunnel", "mouthPucker",
+                                "mouthLeft", "mouthRight",
                                 "mouthSmileLeft", "mouthSmileRight",
-                                "mouthPucker", "cheekPuff"
+                                "mouthFrownLeft", "mouthFrownRight",
+                                "mouthDimpleLeft", "mouthDimpleRight",
+                                "mouthStretchLeft", "mouthStretchRight",
+                                "mouthRollLower", "mouthRollUpper",
+                                "mouthShrugLower", "mouthShrugUpper",
+                                "mouthPressLeft", "mouthPressRight",
+                                "mouthLowerDownLeft", "mouthLowerDownRight",
+                                "mouthUpperUpLeft", "mouthUpperUpRight",
+                                // Cheeks & Nose
+                                "cheekPuff",
+                                "cheekSquintLeft", "cheekSquintRight",
+                                "noseSneerLeft", "noseSneerRight",
+                                // Tongue
+                                "tongueOut"
                             ]
 
                             ForEach(relevantKeys.sorted(), id: \.self) { key in
@@ -117,16 +145,16 @@ struct FaceDetectionTestView: View {
                                             .font(.caption)
                                             .frame(maxWidth: .infinity, alignment: .leading)
 
-                                        Text(String(format: "%.2f", value))
+                                        Text(String(format: "%.3f", value))
                                             .font(.caption.monospacedDigit())
-                                            .foregroundColor(value > 0.5 ? .green : .primary)
-                                            .frame(width: 50, alignment: .trailing)
+                                            .foregroundColor(value > 0.5 ? .green : (value > 0.3 ? .orange : .primary))
+                                            .frame(width: 55, alignment: .trailing)
 
                                         // Visual bar
                                         GeometryReader { geo in
                                             HStack(spacing: 0) {
                                                 Rectangle()
-                                                    .fill(Color.green)
+                                                    .fill(value > 0.5 ? Color.green : (value > 0.3 ? Color.orange : Color.blue))
                                                     .frame(width: geo.size.width * CGFloat(min(value, 1.0)))
                                                 Spacer(minLength: 0)
                                             }
@@ -148,7 +176,14 @@ struct FaceDetectionTestView: View {
                 Spacer()
             }
             .navigationTitle("Face Detection Test")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button("Close") {
+                        dismiss()
+                    }
+                }
+
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         showDebugOverlay.toggle()

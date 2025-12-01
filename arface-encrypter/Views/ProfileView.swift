@@ -10,6 +10,8 @@ import SwiftUI
 struct ProfileView: View {
     @State private var userSettings = UserSettings()
     @State private var sprites: [FaceExpression: UIImage] = [:]
+    @State private var showTestView = false
+    @State private var showGIFTestView = false
 
     var body: some View {
         NavigationStack {
@@ -66,7 +68,7 @@ struct ProfileView: View {
                                                 .frame(width: 100, height: 100)
                                         }
 
-                                        Text(expression.emoji)
+                                        ExpressionEmojiView(expression: expression)
                                             .font(.title3)
 
                                         Text(expression.displayName)
@@ -111,10 +113,60 @@ struct ProfileView: View {
                     }
                     .padding(.horizontal)
 
+                    Divider()
+                        .padding(.vertical)
+
+                    // Developer Tools Section
+                    VStack(spacing: 12) {
+                        Text("Developer Tools")
+                            .font(.headline)
+
+                        Button {
+                            showTestView = true
+                        } label: {
+                            HStack {
+                                Image(systemName: "face.smiling")
+                                Text("Face Detection Test")
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .padding()
+                            .background(Color.blue.opacity(0.1))
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                        }
+                        .buttonStyle(.plain)
+
+                        Button {
+                            showGIFTestView = true
+                        } label: {
+                            HStack {
+                                Image(systemName: "photo.stack.fill")
+                                Text("GIF Generation Test")
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .padding()
+                            .background(Color.purple.opacity(0.1))
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    .padding(.horizontal)
+
                     Spacer()
                 }
             }
             .navigationTitle("Profile")
+            .sheet(isPresented: $showTestView) {
+                FaceDetectionTestView()
+            }
+            .sheet(isPresented: $showGIFTestView) {
+                GIFTestView()
+            }
             .task {
                 // Load sprites when view appears
                 loadSprites()

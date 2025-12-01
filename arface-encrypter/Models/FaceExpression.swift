@@ -37,7 +37,7 @@ enum FaceExpression: String, CaseIterable, Codable {
         case .winkLeft:
             return "😉"
         case .winkRight:
-            return "😜"
+            return "😉"  // Same as left wink, will be flipped in UI
         case .tongueOut:
             return "😛"
         case .surprise:
@@ -46,6 +46,16 @@ enum FaceExpression: String, CaseIterable, Codable {
             return "😁"
         case .smooch:
             return "😘"
+        }
+    }
+
+    /// Whether this emoji should be flipped horizontally in the UI
+    var shouldFlipEmoji: Bool {
+        switch self {
+        case .winkRight:
+            return true
+        default:
+            return false
         }
     }
 
