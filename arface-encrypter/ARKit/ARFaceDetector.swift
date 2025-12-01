@@ -19,7 +19,6 @@ import Combine
 /// // Observe detector.currentExpression for changes
 /// detector.stopTracking()
 /// ```
-@MainActor
 class ARFaceDetector: NSObject, ObservableObject {
 
     // MARK: - Published Properties
@@ -55,6 +54,7 @@ class ARFaceDetector: NSObject, ObservableObject {
     }
 
     /// Start ARKit face tracking
+    @MainActor
     func startTracking() {
         guard ARFaceTrackingConfiguration.isSupported else {
             print("⚠️ ARKit face tracking not supported on this device")
@@ -70,6 +70,7 @@ class ARFaceDetector: NSObject, ObservableObject {
     }
 
     /// Stop ARKit face tracking
+    @MainActor
     func stopTracking() {
         session.pause()
         detectionActive = false
@@ -154,6 +155,7 @@ class ARFaceDetector: NSObject, ObservableObject {
     }
 
     /// Process blendshapes and update published properties
+    @MainActor
     private func processBlendshapes(_ blendshapes: [ARFaceAnchor.BlendShapeLocation: NSNumber]) {
 
         // Update debug blendshapes

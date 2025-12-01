@@ -10,6 +10,7 @@ import SwiftUI
 struct EncodeView: View {
     @State private var viewModel = EncodeViewModel()
     @State private var userSettings = UserSettings()
+    @StateObject private var faceDetector = ARFaceDetector()
     
     var body: some View {
         NavigationStack {
@@ -78,7 +79,7 @@ struct EncodeView: View {
             Spacer()
             
             Button {
-                viewModel.startExpressionRecording()
+                viewModel.startExpressionRecording(with: faceDetector)
             } label: {
                 Label("Lock Message with Facial Expressions", systemImage: "faceid")
                     .frame(maxWidth: .infinity)
@@ -99,7 +100,7 @@ struct EncodeView: View {
         VStack(spacing: 0) {
             // Camera view
             ARFaceTrackingView(
-                detector: viewModel.faceDetector,
+                detector: faceDetector,
                 showDebugOverlay: false
             )
             .overlay(alignment: .top) {
@@ -111,7 +112,7 @@ struct EncodeView: View {
                         .background(.ultraThinMaterial)
                         .cornerRadius(20)
                     
-                    if let currentExpr = viewModel.currentDetectedExpression {
+                    if let currentExpr = faceDetector.currentExpression {
                         Text("\(currentExpr.emoji) \(currentExpr.displayName)")
                             .font(.title3)
                             .padding(.horizontal, 16)
@@ -178,7 +179,7 @@ struct EncodeView: View {
                 .padding(.horizontal)
                 
                 Button("Cancel") {
-                    viewModel.cancel()
+                    viewModel.cancel(detector: faceDetector)
                 }
                 .buttonStyle(.bordered)
                 .padding(.bottom)
@@ -186,8 +187,13 @@ struct EncodeView: View {
             .padding(.vertical)
             .background(.ultraThinMaterial)
         }
+        .onChange(of: faceDetector.currentExpression) { _, newExpression in
+            if let expression = newExpression {
+                viewModel.handleDetectedExpression(expression, detector: faceDetector)
+            }
+        }
         .onDisappear {
-            viewModel.faceDetector.stopTracking()
+            faceDetector.stopTracking()
         }
     }
     
@@ -266,7 +272,7 @@ struct EncodeView: View {
                                 .foregroundStyle(.secondary)
                             
                             HStack(spacing: 8) {
-                                ForEach(viewModel.expressionRecorder.recordedExpressions, id: \.self) { expr in
+                                ForEach(Array(viewModel.expressionRecorder.recordedExpressions.enumerated()), id: \.offset) { index, expr in
                                     VStack(spacing: 4) {
                                         Text(expr.emoji)
                                             .font(.title2)
@@ -299,7 +305,7 @@ struct EncodeView: View {
                         .buttonStyle(.borderedProminent)
                         
                         Button {
-                            viewModel.reset()
+                            viewModel.reset(detector: faceDetector)
                         } label: {
                             Label("Create Another Message", systemImage: "plus.circle")
                                 .frame(maxWidth: .infinity)

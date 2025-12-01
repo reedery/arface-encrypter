@@ -7,12 +7,10 @@
 
 import Foundation
 import Observation
-import Combine
 
 /// View model for the encode flow
 /// Manages the entire message encoding process from text input to GIF generation
 @Observable
-@MainActor
 class EncodeViewModel {
     
     // MARK: - State Properties
@@ -20,17 +18,10 @@ class EncodeViewModel {
     var messageText: String = ""
     var expressionRecorder = ExpressionRecorder()
     
-    // Use @ObservationIgnored for ObservableObject properties
-    @ObservationIgnored var faceDetector = ARFaceDetector()
-    @ObservationIgnored private var cancellables = Set<AnyCancellable>()
-    
     var generatedGIFURL: URL?
     var isGenerating = false
     var errorMessage: String?
     var createdMessage: Message?
-    
-    // Track current expression separately so @Observable can track it
-    var currentDetectedExpression: FaceExpression?
     
     // MARK: - Encoding Steps
     
@@ -53,35 +44,20 @@ class EncodeViewModel {
         messageText.count > 100 ? "red" : "secondary"
     }
     
-    // MARK: - Initialization
-    
-    init() {
-        // Observe the face detector's currentExpression changes
-        faceDetector.$currentExpression
-            .sink { [weak self] expression in
-                guard let self = self else { return }
-                Task { @MainActor in
-                    self.currentDetectedExpression = expression
-                    if let expr = expression {
-                        self.handleDetectedExpression(expr)
-                    }
-                }
-            }
-            .store(in: &cancellables)
-    }
-    
     // MARK: - Public Methods
     
     /// Start the expression recording process
-    func startExpressionRecording() {
+    func startExpressionRecording(with detector: ARFaceDetector) {
         print("🎬 Starting expression recording")
         currentStep = .recordExpressions
-        faceDetector.startTracking()
+        Task { @MainActor in
+            detector.startTracking()
+        }
         expressionRecorder.startRecording()
     }
     
     /// Handle a detected expression from ARFaceDetector
-    func handleDetectedExpression(_ expression: FaceExpression) {
+    func handleDetectedExpression(_ expression: FaceExpression, detector: ARFaceDetector) {
         guard currentStep == .recordExpressions else { return }
         
         if expressionRecorder.recordExpression(expression) {
@@ -91,19 +67,20 @@ class EncodeViewModel {
             // If recording is complete, generate and upload
             if expressionRecorder.isComplete {
                 Task {
-                    await generateAndUploadMessage()
+                    await generateAndUploadMessage(detector: detector)
                 }
             }
         }
     }
     
     /// Generate GIF and upload message to database
-    @MainActor
-    func generateAndUploadMessage() async {
+    func generateAndUploadMessage(detector: ARFaceDetector) async {
         print("🚀 Generating and uploading message")
         currentStep = .generatingGIF
         isGenerating = true
-        faceDetector.stopTracking()
+        await MainActor.run {
+            detector.stopTracking()
+        }
         
         do {
             // 1. Create message in database first (to get ID)
@@ -145,7 +122,7 @@ class EncodeViewModel {
     }
     
     /// Reset the entire encoding flow
-    func reset() {
+    func reset(detector: ARFaceDetector) {
         print("🔄 Resetting encode flow")
         messageText = ""
         expressionRecorder.reset()
@@ -153,13 +130,17 @@ class EncodeViewModel {
         errorMessage = nil
         createdMessage = nil
         currentStep = .enterMessage
-        faceDetector.stopTracking()
+        Task { @MainActor in
+            detector.stopTracking()
+        }
     }
     
     /// Cancel the current encoding process
-    func cancel() {
+    func cancel(detector: ARFaceDetector) {
         print("❌ Canceling encode flow")
-        faceDetector.stopTracking()
+        Task { @MainActor in
+            detector.stopTracking()
+        }
         expressionRecorder.reset()
         currentStep = .enterMessage
     }
