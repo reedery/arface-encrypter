@@ -10,6 +10,7 @@ import ImageIO
 import UniformTypeIdentifiers
 
 /// Generates animated GIFs from facial expression sequences
+@MainActor
 class GIFGenerator {
 
     enum GIFError: LocalizedError {
@@ -17,6 +18,7 @@ class GIFGenerator {
         case missingSprites
         case failedToCreateGIF
         case failedToWriteFile
+        case imageGenerationFailed(String)
 
         var errorDescription: String? {
             switch self {
@@ -28,6 +30,8 @@ class GIFGenerator {
                 return "Failed to create GIF image"
             case .failedToWriteFile:
                 return "Failed to write GIF file to disk"
+            case .imageGenerationFailed(let reason):
+                return "Failed to generate AI-enhanced image: \(reason)"
             }
         }
     }
@@ -60,22 +64,24 @@ class GIFGenerator {
         }
     }
 
-    /// Generate animated GIF from expression sequence
+    /// Generate animated GIF from expression sequence using AI-enhanced frames
     /// - Parameters:
     ///   - expressions: Array of 5 facial expressions
     ///   - avatar: Avatar type (bear or fox)
     ///   - messageID: Message ID to overlay on last frame
+    ///   - onFrameGenerated: Optional callback called when each AI frame is generated
     /// - Returns: URL to generated GIF file in temp directory
     static func generateGIF(
         expressions: [FaceExpression],
         avatar: AvatarType,
-        messageID: String
+        messageID: String,
+        onFrameGenerated: (@MainActor (UIImage, Int) -> Void)? = nil
     ) async throws -> URL {
 
         // Clean up old GIF files before generating new one
         cleanupOldGIFs()
 
-        print("🎬 Starting GIF generation...")
+        print("🎬 Starting AI-enhanced GIF generation...")
         print("   Expressions: \(expressions.map(\.rawValue).joined(separator: ", "))")
         print("   Avatar: \(avatar.displayName)")
         print("   Message ID: \(messageID)")
@@ -88,20 +94,50 @@ class GIFGenerator {
             throw GIFError.missingSprites
         }
 
-        // 2. Build frame sequence - just the 5 expressions, no neutral frames
-        var frames: [UIImage] = []
-        var frameDurations: [TimeInterval] = []
-
-        // Add each expression frame
-        for (index, expression) in expressions.enumerated() {
+        // 2. Prepare frames for AI generation
+        var framesToGenerate: [(spriteImage: UIImage, avatar: AvatarType, expression: FaceExpression)] = []
+        
+        for expression in expressions {
             guard let expressionSprite = sprites[expression] else {
                 print("⚠️ Missing sprite for expression: \(expression.rawValue)")
                 throw GIFError.invalidSprite
             }
+            framesToGenerate.append((expressionSprite, avatar, expression))
+        }
 
-            // Add overlays: expression name, frame number, and ID (first frame only)
+        // 3. Generate AI-enhanced frames using Image Playground (if enabled)
+        let processedFrames: [UIImage]
+        let useAI = UserSettings().useAIImageGeneration
+        
+        if useAI {
+            print("🤖 Attempting to generate AI-enhanced frames...")
+            do {
+                processedFrames = try await ImagePlaygroundService.generateEnhancedFrames(
+                    frames: framesToGenerate,
+                    onFrameGenerated: onFrameGenerated
+                )
+                print("✅ Using AI-enhanced frames")
+            } catch {
+                print("⚠️ AI generation not available or failed: \(error.localizedDescription)")
+                print("📸 Falling back to original sprite frames")
+                // Fallback to original sprites if AI generation fails
+                processedFrames = framesToGenerate.map { $0.spriteImage }
+            }
+        } else {
+            print("📸 Using original sprite frames (AI generation disabled)")
+            processedFrames = framesToGenerate.map { $0.spriteImage }
+        }
+
+        // 4. Add overlays to processed frames
+        var frames: [UIImage] = []
+        var frameDurations: [TimeInterval] = []
+
+        for (index, processedFrame) in processedFrames.enumerated() {
+            let expression = expressions[index]
             let frameNumber = index + 1
-            var frameWithOverlays = addExpressionName(to: expressionSprite, expression: expression)
+            
+            // Add overlays: expression name, frame number, and ID (first frame only)
+            var frameWithOverlays = addExpressionName(to: processedFrame, expression: expression)
             frameWithOverlays = addFrameNumber(to: frameWithOverlays, frameNumber: frameNumber)
             
             // Add ID overlay to first expression frame
@@ -109,7 +145,6 @@ class GIFGenerator {
                 frameWithOverlays = addIDOverlay(to: frameWithOverlays, messageID: messageID)
             }
 
-            // Expression frame
             frames.append(frameWithOverlays)
             
             // Frame 1 holds for 1.5s, other frames for 0.7s
@@ -126,7 +161,7 @@ class GIFGenerator {
         // 5. Generate GIF using ImageIO
         let gifURL = try await createGIF(from: frames, frameDurations: frameDurations, messageID: messageID)
 
-        print("✅ GIF generated successfully at: \(gifURL.path)")
+        print("✅ AI-enhanced GIF generated successfully at: \(gifURL.path)")
         return gifURL
     }
 

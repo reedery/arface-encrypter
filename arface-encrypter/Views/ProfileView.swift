@@ -35,6 +35,31 @@ struct ProfileView: View {
                     .padding(.top)
 
                     Divider()
+                    
+                    // AI Image Generation Toggle
+                    VStack(spacing: 16) {
+                        Text("Image Generation")
+                            .font(.headline)
+                        
+                        Toggle(isOn: $userSettings.useAIImageGeneration) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("AI-Enhanced Images")
+                                    .font(.body)
+                                Text("Use Apple Image Playground to generate artistic GIF frames")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                        .padding(.horizontal)
+                        
+                        if !userSettings.useAIImageGeneration {
+                            Text("Using original sprite images")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+
+                    Divider()
 
                     // Sprite Preview Grid
                     VStack(spacing: 16) {

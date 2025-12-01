@@ -7,6 +7,7 @@
 
 import Foundation
 import Observation
+import UIKit
 
 /// View model for the encode flow
 /// Manages the entire message encoding process from text input to GIF generation
@@ -22,6 +23,9 @@ class EncodeViewModel {
     var isGenerating = false
     var errorMessage: String?
     var createdMessage: Message?
+    
+    // Track AI-generated frames as they're created
+    var generatedFrames: [UIImage] = []
     
     // MARK: - Encoding Steps
     
@@ -99,10 +103,19 @@ class EncodeViewModel {
             
             // 2. Generate GIF with message ID
             print("🎨 Generating GIF with message ID: \(message.id)")
+            
+            // Clear previous frames
+            generatedFrames = []
+            
             let gifURL = try await GIFGenerator.generateGIF(
                 expressions: expressionRecorder.recordedExpressions,
                 avatar: UserSettings().selectedAvatar,
-                messageID: "\(message.id)"
+                messageID: "\(message.id)",
+                onFrameGenerated: { @MainActor image, index in
+                    // Add frame as it's generated for real-time preview
+                    self.generatedFrames.append(image)
+                    print("📸 Frame \(index + 1) ready for preview")
+                }
             )
             
             generatedGIFURL = gifURL
@@ -132,6 +145,7 @@ class EncodeViewModel {
         generatedGIFURL = nil
         errorMessage = nil
         createdMessage = nil
+        generatedFrames = []
         currentStep = .enterMessage
         Task { @MainActor in
             detector.stopTracking()
@@ -145,6 +159,7 @@ class EncodeViewModel {
             detector.stopTracking()
         }
         expressionRecorder.reset()
+        generatedFrames = []
         currentStep = .enterMessage
     }
     

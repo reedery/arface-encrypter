@@ -8,6 +8,7 @@ An innovative iOS app that encrypts messages using a sequence of 5 facial expres
 
 - 🎭 **Expression-Based Encryption**: Lock messages with 6 unique facial expressions
 - 🎨 **Animated GIF Generation**: Share beautiful animated avatars (Bear & Fox)
+- 🤖 **AI-Enhanced Images**: Use Apple Image Playground to generate artistic GIF frames (iOS 18.2+)
 - 🔒 **Secure & Fun**: No traditional passwords needed
 - 📱 **Native iOS**: Built with SwiftUI + ARKit
 - ☁️ **Cloud-Backed**: Powered by Supabase
@@ -58,17 +59,26 @@ See [ARCHITECTURE.md](./ARCHITECTURE.md) for detailed documentation.
 - **Language**: Swift 5.9+
 - **UI**: SwiftUI
 - **Face Tracking**: ARKit (ARFaceTrackingConfiguration)
+- **AI Image Generation**: Image Playground (iOS 18.2+)
 - **Backend**: Supabase (PostgreSQL)
 - **GIF Generation**: ImageIO (native)
 - **State Management**: @Observable (Swift Observation)
 
 ## 📋 Requirements
 
+### Base Requirements
 - iOS 14.0+
 - Xcode 15.0+
 - Face ID capable device (iPhone X or later)
 - Camera permission
 - Network connection (for message sync)
+
+### AI-Enhanced Images (Optional)
+- iOS 18.2+ for Image Playground support
+- Apple Silicon device (A17 Pro / M-series recommended)
+- Falls back to original sprites if unavailable
+
+See [IMAGE_PLAYGROUND_INTEGRATION.md](./IMAGE_PLAYGROUND_INTEGRATION.md) for details.
 
 ## 🛠️ Setup
 
@@ -112,7 +122,8 @@ Select a Face ID capable device or simulator and run (⌘R)
 ### First Time Setup
 1. Open app → Navigate to Profile tab
 2. Select your avatar (Bear or Fox)
-3. Grant camera permissions when prompted
+3. Toggle AI-Enhanced Images (requires iOS 18.2+)
+4. Grant camera permissions when prompted
 
 ### Creating an Encrypted Message
 1. **Encode Tab** → Type your secret message (max 100 chars)
@@ -164,7 +175,8 @@ arface-encrypter/
 │   ├── AuthManager.swift
 │   └── ExpressionRecorder.swift
 ├── Services/
-│   └── MessageService.swift
+│   ├── MessageService.swift
+│   └── ImagePlaygroundService.swift
 ├── ARKit/
 │   └── ARFaceDetector.swift
 ├── Utilities/
