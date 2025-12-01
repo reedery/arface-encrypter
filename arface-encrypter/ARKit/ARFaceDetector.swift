@@ -30,7 +30,7 @@ class ARFaceDetector: NSObject, ObservableObject {
 
     // MARK: - Private Properties
 
-    private let session = ARSession()
+    let session = ARSession()
     private var expressionStartTime: Date?
     private var lastDetectedExpression: FaceExpression?
     private var lastExpressionTriggerTime: Date?
