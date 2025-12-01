@@ -38,7 +38,7 @@ struct DecodeView: View {
             VStack(spacing: 12) {
                 Image(systemName: "lock.open.fill")
                     .font(.system(size: 60))
-                    .foregroundStyle(.orange)
+                    .foregroundStyle(.teal)
                 
                 Text("Unlock a Secret Message")
                     .font(.title2)
@@ -50,6 +50,7 @@ struct DecodeView: View {
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
             }
+            .padding(.top, 60)
             
             Spacer()
             
@@ -67,14 +68,14 @@ struct DecodeView: View {
                 .padding(.horizontal, 20)
                 .background(
                     LinearGradient(
-                        colors: [Color.purple, Color.purple.opacity(0.8)],
+                        colors: [Color.teal, Color.teal.opacity(0.8)],
                         startPoint: .leading,
                         endPoint: .trailing
                     )
                 )
                 .foregroundStyle(.white)
                 .cornerRadius(16)
-                .shadow(color: .purple.opacity(0.3), radius: 8, x: 0, y: 4)
+                .shadow(color: .teal.opacity(0.3), radius: 8, x: 0, y: 4)
             }
             .padding(.horizontal, 24)
             
@@ -148,13 +149,13 @@ struct DecodeView: View {
                                 Image(systemName: "photo.fill")
                                     .font(.title3)
                                 Text("Load GIF")
-                                    .font(.caption2)
-                                    .fontWeight(.medium)
+                                    .font(.system(size: 14, weight: .medium))
+                                    .fontWeight(.heavy)
                             }
                             .frame(width: 100, height: 100)
                             .background(.ultraThinMaterial)
                             .cornerRadius(8)
-                            .shadow(color: .black.opacity(0.3), radius: 4)
+                            .shadow(color: .black.opacity(0.4), radius: 4, x: 1, y: 2)
                         }
                     }
                 }
