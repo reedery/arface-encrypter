@@ -83,14 +83,14 @@ struct ProfileView: View {
 
                     Divider()
 
-                    // User Stats Section (Placeholder for now)
+                    // User Stats Section
                     VStack(spacing: 12) {
                         Text("Stats")
                             .font(.headline)
 
                         HStack(spacing: 40) {
                             VStack {
-                                Text("0")
+                                Text("\(userSettings.encodedCount)")
                                     .font(.title2)
                                     .fontWeight(.bold)
                                 Text("Encoded")
@@ -99,7 +99,7 @@ struct ProfileView: View {
                             }
 
                             VStack {
-                                Text("0")
+                                Text("\(userSettings.decodedCount)")
                                     .font(.title2)
                                     .fontWeight(.bold)
                                 Text("Decoded")
@@ -160,7 +160,6 @@ struct ProfileView: View {
                     Spacer()
                 }
             }
-            .navigationTitle("Profile")
             .sheet(isPresented: $showTestView) {
                 FaceDetectionTestView()
             }

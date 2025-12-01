@@ -11,6 +11,7 @@ struct EncodeView: View {
     @State private var viewModel = EncodeViewModel()
     @State private var userSettings = UserSettings()
     @StateObject private var faceDetector = ARFaceDetector()
+    @State private var showingShareSheet = false
     
     var body: some View {
         NavigationStack {
@@ -26,7 +27,6 @@ struct EncodeView: View {
                     shareGIFView
                 }
             }
-            .navigationTitle("Encode Message")
             .alert("Error", isPresented: .constant(viewModel.errorMessage != nil)) {
                 Button("OK") { viewModel.errorMessage = nil }
             } message: {
@@ -66,6 +66,14 @@ struct EncodeView: View {
                     .textFieldStyle(.roundedBorder)
                     .lineLimit(3...6)
                     .padding(.horizontal)
+                    .toolbar {
+                        ToolbarItemGroup(placement: .keyboard) {
+                            Spacer()
+                            Button("Done") {
+                                hideKeyboard()
+                            }
+                        }
+                    }
                 
                 HStack {
                     Spacer()
@@ -300,13 +308,9 @@ struct EncodeView: View {
                         
                         // Action buttons
                         VStack(spacing: 12) {
-                            ShareLink(
-                                item: gifURL,
-                                preview: SharePreview(
-                                    "Secret Message",
-                                    image: Image(systemName: "lock.fill")
-                                )
-                            ) {
+                            Button {
+                                showingShareSheet = true
+                            } label: {
                                 HStack(spacing: 12) {
                                     Image(systemName: "square.and.arrow.up")
                                         .font(.system(size: 20, weight: .semibold))
@@ -331,10 +335,10 @@ struct EncodeView: View {
                                 viewModel.reset(detector: faceDetector)
                             } label: {
                                 Label("Create Another Message", systemImage: "plus.circle")
-                                    .font(.subheadline)
+                                    .font(.system(size: 20, weight: .semibold))
                                     .foregroundColor(.primary)
                                     .frame(maxWidth: .infinity)
-                                    .padding(.vertical, 12)
+                                    .padding(.vertical, 16)
                             }
                             .buttonStyle(.bordered)
                         }
@@ -358,6 +362,13 @@ struct EncodeView: View {
                 }
             }
         }
+        .gifShareSheet(isPresented: $showingShareSheet, gifURL: viewModel.generatedGIFURL)
+    }
+    
+    // MARK: - Helper Methods
+    
+    private func hideKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 }
 
