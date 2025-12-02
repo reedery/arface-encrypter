@@ -14,7 +14,7 @@ Unlock with a secret combination of facial expressions.
 
 ### Steps
 
-1. **Clone and open**
+1. **Clone and open from Main branch**
 
    ```bash
    git clone https://github.com/yourusername/arface-encrypter.git
