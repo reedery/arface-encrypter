@@ -12,6 +12,8 @@ struct ProfileView: View {
     @State private var sprites: [FaceExpression: UIImage] = [:]
     @State private var showTestView = false
     @State private var showGIFTestView = false
+    @State private var offlineMessageCount = 0
+    @State private var showClearConfirmation = false
 
     var body: some View {
         NavigationStack {
@@ -145,6 +147,31 @@ struct ProfileView: View {
                     VStack(spacing: 12) {
                         Text("Developer Tools")
                             .font(.headline)
+                        
+                        // Offline Mode Toggle
+                        Toggle(isOn: $userSettings.offlineMode) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Offline Mode")
+                                    .font(.body)
+                                Text("Write messages to Supabase backend with Offline Mode turned off. Requires API key.")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                        .padding()
+                        .background(Color.orange.opacity(0.1))
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        
+                        if !SupabaseConfig.shared.isConfigured {
+                            HStack {
+                                Image(systemName: "exclamationmark.triangle.fill")
+                                    .foregroundStyle(.orange)
+                                Text("Supabase not configured. App running in offline-only mode.")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .padding(.horizontal)
+                        }
 
                         Button {
                             showTestView = true
@@ -179,6 +206,29 @@ struct ProfileView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                         }
                         .buttonStyle(.plain)
+                        
+                        // Clear Offline Messages Button
+                        Button {
+                            showClearConfirmation = true
+                        } label: {
+                            HStack {
+                                Image(systemName: "trash")
+                                Text("Clear Offline Messages")
+                                Spacer()
+                                Text("\(offlineMessageCount)")
+                                    .font(.caption)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 4)
+                                    .background(Color.red.opacity(0.2))
+                                    .clipShape(Capsule())
+                            }
+                            .padding()
+                            .background(Color.red.opacity(0.1))
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                        }
+                        .buttonStyle(.plain)
+                        .disabled(offlineMessageCount == 0)
+                        .opacity(offlineMessageCount == 0 ? 0.5 : 1)
                     }
                     .padding(.horizontal)
 
@@ -191,9 +241,20 @@ struct ProfileView: View {
             .sheet(isPresented: $showGIFTestView) {
                 GIFTestView()
             }
+            .alert("Clear Offline Messages", isPresented: $showClearConfirmation) {
+                Button("Cancel", role: .cancel) { }
+                Button("Clear All", role: .destructive) {
+                    OfflineMessageStore.shared.clearAllMessages()
+                    offlineMessageCount = 0
+                }
+            } message: {
+                Text("This will delete all \(offlineMessageCount) locally stored messages. This action cannot be undone.")
+            }
             .task {
                 // Load sprites when view appears
                 loadSprites()
+                // Load offline message count
+                offlineMessageCount = OfflineMessageStore.shared.messageCount()
             }
             .onChange(of: userSettings.selectedAvatar) { _, _ in
                 // Reload sprites when avatar changes

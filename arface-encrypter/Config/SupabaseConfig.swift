@@ -11,22 +11,36 @@ import Supabase
 class SupabaseConfig {
     static let shared = SupabaseConfig()
     
-    let client: SupabaseClient
+    /// The Supabase client, nil if not configured
+    let client: SupabaseClient?
+    
+    /// Whether Supabase is properly configured
+    var isConfigured: Bool { client != nil }
     
     private init() {
         print("[SupabaseConfig] Init SupabaseClient")
         
         // Read from Info.plist to keep keys out of source code
-        guard let supabaseURL = Bundle.main.object(forInfoDictionaryKey: "SUPABASE_URL") as? String else {
-            fatalError("Missing SUPABASE_URL in Info.plist")
+        guard let supabaseURL = Bundle.main.object(forInfoDictionaryKey: "SUPABASE_URL") as? String,
+              !supabaseURL.isEmpty,
+              supabaseURL != "YOUR_SUPABASE_URL" else {
+            print("[SupabaseConfig] ⚠️ Missing or invalid SUPABASE_URL - running in offline-only mode")
+            self.client = nil
+            return
         }
         
-        guard let supabaseKey = Bundle.main.object(forInfoDictionaryKey: "SUPABASE_ANON_KEY") as? String else {
-            fatalError("Missing SUPABASE_ANON_KEY in Info.plist")
+        guard let supabaseKey = Bundle.main.object(forInfoDictionaryKey: "SUPABASE_ANON_KEY") as? String,
+              !supabaseKey.isEmpty,
+              supabaseKey != "YOUR_SUPABASE_ANON_KEY" else {
+            print("[SupabaseConfig] ⚠️ Missing or invalid SUPABASE_ANON_KEY - running in offline-only mode")
+            self.client = nil
+            return
         }
         
         guard let url = URL(string: supabaseURL) else {
-            fatalError("Invalid SUPABASE_URL format: \(supabaseURL)")
+            print("[SupabaseConfig] ⚠️ Invalid SUPABASE_URL format: \(supabaseURL) - running in offline-only mode")
+            self.client = nil
+            return
         }
         
         print("[SupabaseConfig] URL: \(supabaseURL)")

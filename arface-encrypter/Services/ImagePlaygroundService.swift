@@ -102,28 +102,30 @@ class ImagePlaygroundService {
         let character: String
         switch avatar {
         case .bear:
-            character = "cute brown bear"
+            character = "happy and cute brown bear with big round ears and big bright eyes"
         case .fox:
-            character = "cute orange fox"
+            character = "happy and cute orange fox with big triangular ears and big bright eyes"
         }
         
         // Simple expression description
         let expressionDesc: String
         switch expression {
-        case .winkLeft, .winkRight:
-            expressionDesc = "winking"
+        case .winkLeft:
+            expressionDesc = "winking with RIGHT EYE completely shut tightly and LEFT EYE WIDE OPEN"
+        case .winkRight:
+            expressionDesc = "winking with LEFT EYE completely shut tightly and RIGHT EYE WIDE OPEN"
         case .tongueOut:
-            expressionDesc = "with tongue out"
+            expressionDesc = "with tongue out clearly and abundantly visible"
         case .surprise:
-            expressionDesc = "surprised with mouth open"
+            expressionDesc = "surprised with mouth WIDE open and big eyes wide open too"
         case .smile:
-            expressionDesc = "smiling happily"
+            expressionDesc = "smiling happily with mouth open and teeth visible clearly and eyes wide open"
         case .smooch:
-            expressionDesc = "blowing a kiss"
+            expressionDesc = "blowing a kiss with mouth puckered forward and red lips"
         }
         
-        // Simple, short prompt
-        return "A \(character) emoji \(expressionDesc) on white background"
+        // Simple prompt
+        return "A shoulder up portrait of \(character) with the head centered clearly \(expressionDesc) in front of white background."
     }
     
     /// Batch generate multiple frames (used for GIF generation)

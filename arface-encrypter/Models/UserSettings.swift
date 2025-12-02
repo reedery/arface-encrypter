@@ -17,6 +17,7 @@ class UserSettings {
     private static let encodedCountKey = "encodedCount"
     private static let decodedCountKey = "decodedCount"
     private static let aiImageGenerationKey = "aiImageGeneration"
+    private static let offlineModeKey = "offlineMode"
 
     var selectedAvatar: AvatarType {
         didSet {
@@ -43,6 +44,13 @@ class UserSettings {
             print("📝 AI Image Generation changed to: \(useAIImageGeneration)")
         }
     }
+    
+    var offlineMode: Bool {
+        didSet {
+            saveToUserDefaults()
+            print("📝 Offline Mode changed to: \(offlineMode)")
+        }
+    }
 
     private init() {
         // Load from UserDefaults or default to bear
@@ -64,7 +72,14 @@ class UserSettings {
             self.useAIImageGeneration = true
         }
         
-        print("⚙️ UserSettings initialized - AI Generation: \(useAIImageGeneration), Avatar: \(selectedAvatar.displayName)")
+        // Load offline mode setting (default to true/ON if not set)
+        if UserDefaults.standard.object(forKey: Self.offlineModeKey) != nil {
+            self.offlineMode = UserDefaults.standard.bool(forKey: Self.offlineModeKey)
+        } else {
+            self.offlineMode = true
+        }
+        
+        print("⚙️ UserSettings initialized - AI Generation: \(useAIImageGeneration), Offline: \(offlineMode), Avatar: \(selectedAvatar.displayName)")
     }
 
     private func saveToUserDefaults() {
@@ -72,6 +87,7 @@ class UserSettings {
         UserDefaults.standard.set(encodedCount, forKey: Self.encodedCountKey)
         UserDefaults.standard.set(decodedCount, forKey: Self.decodedCountKey)
         UserDefaults.standard.set(useAIImageGeneration, forKey: Self.aiImageGenerationKey)
+        UserDefaults.standard.set(offlineMode, forKey: Self.offlineModeKey)
         UserDefaults.standard.synchronize()  // Force sync to disk
     }
     
