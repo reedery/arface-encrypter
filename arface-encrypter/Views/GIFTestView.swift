@@ -12,7 +12,7 @@ import SwiftUI
 struct GIFTestView: View {
     @StateObject private var detector = ARFaceDetector()
     @State private var recorder = ExpressionRecorder()
-    @State private var userSettings = UserSettings()
+    @State private var userSettings = UserSettings.shared
 
     @State private var generatedGIFURL: URL?
     @State private var isGenerating = false

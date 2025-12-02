@@ -109,7 +109,7 @@ class EncodeViewModel {
             
             let gifURL = try await GIFGenerator.generateGIF(
                 expressions: expressionRecorder.recordedExpressions,
-                avatar: UserSettings().selectedAvatar,
+                avatar: UserSettings.shared.selectedAvatar,
                 messageID: "\(message.id)",
                 onFrameGenerated: { @MainActor image, index in
                     // Add frame as it's generated for real-time preview
@@ -122,7 +122,7 @@ class EncodeViewModel {
             currentStep = .shareGIF
             
             // Increment encoded count
-            UserSettings().incrementEncodedCount()
+            UserSettings.shared.incrementEncodedCount()
             
             // Success haptic
             HapticManager.sequenceComplete()

@@ -10,6 +10,9 @@ import SwiftUI
 
 @Observable
 class UserSettings {
+    // Shared singleton instance
+    static let shared = UserSettings()
+    
     private static let selectedAvatarKey = "selectedAvatar"
     private static let encodedCountKey = "encodedCount"
     private static let decodedCountKey = "decodedCount"
@@ -18,6 +21,7 @@ class UserSettings {
     var selectedAvatar: AvatarType {
         didSet {
             saveToUserDefaults()
+            print("📝 Avatar changed to: \(selectedAvatar.displayName)")
         }
     }
     
@@ -36,10 +40,11 @@ class UserSettings {
     var useAIImageGeneration: Bool {
         didSet {
             saveToUserDefaults()
+            print("📝 AI Image Generation changed to: \(useAIImageGeneration)")
         }
     }
 
-    init() {
+    private init() {
         // Load from UserDefaults or default to bear
         if let savedValue = UserDefaults.standard.string(forKey: Self.selectedAvatarKey),
            let avatar = AvatarType(rawValue: savedValue) {
@@ -58,6 +63,8 @@ class UserSettings {
         } else {
             self.useAIImageGeneration = true
         }
+        
+        print("⚙️ UserSettings initialized - AI Generation: \(useAIImageGeneration), Avatar: \(selectedAvatar.displayName)")
     }
 
     private func saveToUserDefaults() {
@@ -65,6 +72,7 @@ class UserSettings {
         UserDefaults.standard.set(encodedCount, forKey: Self.encodedCountKey)
         UserDefaults.standard.set(decodedCount, forKey: Self.decodedCountKey)
         UserDefaults.standard.set(useAIImageGeneration, forKey: Self.aiImageGenerationKey)
+        UserDefaults.standard.synchronize()  // Force sync to disk
     }
     
     /// Increment the encoded messages count

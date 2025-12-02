@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ProfileView: View {
-    @State private var userSettings = UserSettings()
+    @State private var userSettings = UserSettings.shared
     @State private var sprites: [FaceExpression: UIImage] = [:]
     @State private var showTestView = false
     @State private var showGIFTestView = false

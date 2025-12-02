@@ -107,7 +107,9 @@ class GIFGenerator {
 
         // 3. Generate AI-enhanced frames using Image Playground (if enabled)
         let processedFrames: [UIImage]
-        let useAI = UserSettings().useAIImageGeneration
+        let useAI = UserSettings.shared.useAIImageGeneration
+        
+        print("🔍 AI Image Generation Setting: \(useAI)")
         
         if useAI {
             print("🤖 Attempting to generate AI-enhanced frames...")

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct EncodeView: View {
     @State private var viewModel = EncodeViewModel()
-    @State private var userSettings = UserSettings()
+    @State private var userSettings = UserSettings.shared
     @StateObject private var faceDetector = ARFaceDetector()
     @State private var showingShareSheet = false
     
