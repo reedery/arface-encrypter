@@ -22,6 +22,15 @@ struct Message: Codable, Identifiable {
         case message
         case expressionList = "expression_list"
     }
+    
+    /// Memberwise initializer for creating messages locally (offline mode)
+    init(id: Int, createdAt: Date, expressionHash: String?, message: String?, expressionList: String?) {
+        self.id = id
+        self.createdAt = createdAt
+        self.expressionHash = expressionHash
+        self.message = message
+        self.expressionList = expressionList
+    }
 
     /// Computed property to convert expression_list string to array of FaceExpression enums
     var expressions: [FaceExpression]? {

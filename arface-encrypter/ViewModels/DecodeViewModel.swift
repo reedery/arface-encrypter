@@ -121,7 +121,7 @@ final class DecodeViewModel {
                 currentDecodingStep = .messageRevealed
                 
                 // Increment decoded count
-                UserSettings().incrementDecodedCount()
+                UserSettings.shared.incrementDecodedCount()
                 
                 HapticManager.sequenceComplete()
             } else {

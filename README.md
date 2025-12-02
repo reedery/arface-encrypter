@@ -1,257 +1,92 @@
-# 🔐 ARFace Encrypter
+# Face Encrypter AR
 
-> Secure your messages with facial expressions. No keys, no passwords—just your face.
+Share hidden messages with friends in AI generated animations!
+Unlock with a secret combination of facial expressions.
 
-An innovative iOS app that encrypts messages using a sequence of 5 facial expressions, generating an animated GIF that can only be decoded by performing the exact same sequence.
+## Quick Start (Demo this project on your iPhone or iPad)
 
-## ✨ Features
+### Requirements
 
-- 🎭 **Expression-Based Encryption**: Lock messages with 6 unique facial expressions
-- 🎨 **Animated GIF Generation**: Share beautiful animated avatars (Bear & Fox)
-- 🔒 **Secure & Fun**: No traditional passwords needed
-- 📱 **Native iOS**: Built with SwiftUI + ARKit
-- ☁️ **Cloud-Backed**: Powered by Supabase
-
-## 🎯 How It Works
-
-### Encoding
-1. Type your secret message
-2. Perform 5 facial expressions in sequence
-3. App generates an animated GIF with embedded message ID
-4. Share the GIF with your recipient
-
-### Decoding
-1. Import the received GIF
-2. Perform the same 5 expressions from the GIF
-3. Message unlocks if sequence matches!
-
-## 🎭 Expressions
-
-The app detects 6 facial expressions:
-
-| Expression | Emoji | Detection |
-|------------|-------|-----------|
-| Left Wink | 😉 | Left eye closed, right open |
-| Right Wink | 😉 (flipped) | Right eye closed, left open |
-| Tongue Out | 😛 | Tongue visible |
-| Surprise | 😮 | Eyebrows raised + jaw open |
-| Smile | 😁 | Big grin |
-| Smooch | 😘 | Pucker lips |
-
-## 🏗️ Architecture
-
-```
-MVVM + Clean Architecture
-├── Models          (Data structures)
-├── ViewModels      (Business logic)
-├── Views           (UI)
-├── Services        (API layer)
-├── Managers        (State management)
-├── Utilities       (Helpers)
-└── ARKit          (Face detection)
-```
-
-See [ARCHITECTURE.md](./ARCHITECTURE.md) for detailed documentation.
-
-## 🚀 Tech Stack
-
-- **Language**: Swift 5.9+
-- **UI**: SwiftUI
-- **Face Tracking**: ARKit (ARFaceTrackingConfiguration)
-- **Backend**: Supabase (PostgreSQL)
-- **GIF Generation**: ImageIO (native)
-- **State Management**: @Observable (Swift Observation)
-
-## 📋 Requirements
-
+- Mac with Xcode 16+
+- iPhone or iPad (with Face ID depth camera)
 - iOS 14.0+
-- Xcode 15.0+
-- Face ID capable device (iPhone X or later)
-- Camera permission
-- Network connection (for message sync)
+- For AI Generated GIFs: Apple Intelligence capable device with Image Playground App installed. App will still work with "AI Enhanced Images" disabled.
 
-## 🛠️ Setup
+### Steps
 
-### 1. Clone the repository
-```bash
-git clone https://github.com/yourusername/arface-encrypter.git
-cd arface-encrypter
-```
+1. **Clone and open from Main branch**
 
-### 2. Configure Supabase
-Add these keys to `Info.plist`:
-```xml
-<key>SUPABASE_URL</key>
-<string>your-project-url.supabase.co</string>
-<key>SUPABASE_ANON_KEY</key>
-<string>your-anon-key</string>
-```
+   ```bash
+   git clone https://github.com/yourusername/arface-encrypter.git
+   cd arface-encrypter
+   open arface-encrypter.xcodeproj
+   ```
 
-### 3. Database Setup
-Run this SQL in your Supabase dashboard:
-```sql
-CREATE TABLE messages (
-    id SERIAL PRIMARY KEY,
-    created_at TIMESTAMP DEFAULT NOW(),
-    expression_hash TEXT UNIQUE,
-    message TEXT,
-    expression_list TEXT
-);
-```
+2. **Install dependencies**
 
-### 4. Open in Xcode
-```bash
-open arface-encrypter.xcodeproj
-```
+   - Xcode will automatically fetch the Supabase Swift package with dependencies
+   - If not, go to File → Packages → Resolve Package Versions
 
-### 5. Run
-Select a Face ID capable device or simulator and run (⌘R)
+3. **Configure Backend (optional)**
 
-## 📱 Usage
+   The app works in **Offline Mode** by default with no backend setup needed.
 
-### First Time Setup
-1. Open app → Navigate to Profile tab
-2. Select your avatar (Bear or Fox)
-3. Grant camera permissions when prompted
+   To enable cloud sync, add your Supabase credentials to `Info.plist`:
 
-### Creating an Encrypted Message
-1. **Encode Tab** → Type your secret message (max 100 chars)
-2. Tap **"Lock Message with Facial Expressions"**
-3. Perform 5 unique expressions when prompted
-4. Wait for GIF generation (~2-3 seconds)
-5. Share the GIF via Messages, AirDrop, etc.
+   ```xml
+   <key>SUPABASE_URL</key>
+   <string>https://your-project.supabase.co</string>
+   <key>SUPABASE_ANON_KEY</key>
+   <string>your-anon-key</string>
+   ```
 
-### Decoding a Message
-1. **Decode Tab** → Tap **"Decode a New GIF"**
-2. Select the GIF from your Photos
-3. Watch the GIF to learn the sequence
-4. Perform the same 5 expressions
-5. Message reveals if sequence is correct!
+   And run this SQL in your Supabase dashboard:
 
-## 🎨 Avatars
+   ```sql
+   CREATE TABLE messages (
+      id SERIAL PRIMARY KEY,
+      created_at TIMESTAMP DEFAULT NOW(),
+      expression_hash TEXT UNIQUE,
+      message TEXT,
+      expression_list TEXT
+   );
+   ```
 
-### Bear 🐻
-Friendly and classic bear character with 6 expressions.
+> **Note:** Without Supabase configured, the app runs in offline-only mode. Messages are stored locally on your device. This is perfect for demos and testing. Local Messages can be cleared with "Clear Offline Messages" button in Profile view.
 
-### Fox 🦊
-Clever fox character with matching expressions.
+## How It Works
 
-Both use 768×512px sprite sheets (3×2 grid, 256×256px per sprite).
+**Encode:** Type message → Perform 5 expressions → Share generated GIF
 
-## 📁 Project Structure
+**Decode:** Import GIF → Perform same expressions → Message unlocked
+
+## Expressions
+
+| Expression    | Detection                   |
+| ------------- | --------------------------- |
+| Left Wink 😉  | Left eye closed, right open |
+| Right Wink    | Right eye closed, left open |
+| Tongue Out 😛 | Tongue visible              |
+| Surprise 😮   | Eyebrows raised + jaw open  |
+| Smile 😁      | Big grin                    |
+| Smooch 😘     | Pucker lips                 |
+
+## Settings (in Profile View)
+
+- **Avatar:** Choose Bear 🐻 or Fox 🦊
+- **AI Images:** Use Apple Image Playground for artistic frames (iOS 18.2+ with Apple Intelligence and Image Playground App installed)
+- **Offline Mode:** Store messages locally (default ON)
+
+## Architecture
 
 ```
-arface-encrypter/
-├── arface_encrypterApp.swift
-├── ContentView.swift
-├── Models/
-│   ├── AvatarType.swift
-│   ├── FaceExpression.swift
-│   ├── Message.swift
-│   └── UserSettings.swift
-├── ViewModels/
-│   ├── EncodeViewModel.swift
-│   └── DecodeViewModel.swift
-├── Views/
-│   ├── EncodeView.swift
-│   ├── DecodeView.swift
-│   ├── ProfileView.swift
-│   └── Components/
-│       ├── ARFaceTrackingView.swift
-│       ├── AnimatedGIFView.swift
-│       └── ExpressionEmojiView.swift
-├── Managers/
-│   ├── AuthManager.swift
-│   └── ExpressionRecorder.swift
-├── Services/
-│   └── MessageService.swift
-├── ARKit/
-│   └── ARFaceDetector.swift
-├── Utilities/
-│   ├── GIFGenerator.swift
-│   ├── HapticManager.swift
-│   ├── MessageIDExtractor.swift
-│   └── SpriteSheetExtractor.swift
-├── Config/
-│   ├── FaceDetectionThresholds.swift
-│   └── SupabaseConfig.swift
-└── Assets.xcassets/
+Models/          Data structures
+ViewModels/      Business logic
+Views/           SwiftUI UI
+Services/        Supabase + offline storage
+ARKit/           Face detection
 ```
 
-## 🧪 Testing
+## License
 
-### Manual Testing Checklist
-- [ ] All 6 expressions detected correctly
-- [ ] GIF generates with message ID
-- [ ] Message saves to database
-- [ ] Correct sequence unlocks message
-- [ ] Wrong sequence shows error
-- [ ] Avatar switching works
-- [ ] Share sheet functions properly
-
-### Known Limitations
-- Requires good lighting for face detection
-- Expression hold time: 0.4 seconds
-- Max message length: 100 characters
-- GIF file size: ~500KB-2MB
-
-## 🔒 Security Notes
-
-**This is a proof-of-concept app for educational purposes.**
-
-Security considerations:
-- Expression sequences have ~720 possible combinations (6^5 = 7776 with repeats)
-- Message IDs are sequential integers (easily guessable)
-- GIFs include visible expression hints
-- No rate limiting on decode attempts
-
-**For production use**, consider:
-- Hashing expression sequences
-- Random message IDs (UUIDs)
-- Rate limiting
-- Biometric validation
-- End-to-end encryption
-
-## 📈 Future Enhancements
-
-- [ ] Custom avatars from photos
-- [ ] Video recording instead of GIF
-- [ ] Multi-user authentication
-- [ ] Message expiration
-- [ ] Private/public message modes
-- [ ] Expression difficulty levels
-- [ ] Social features (friends, groups)
-- [ ] Analytics dashboard
-
-## 🤝 Contributing
-
-Contributions welcome! Please:
-1. Fork the repository
-2. Create a feature branch
-3. Follow Swift style guide
-4. Add tests if applicable
-5. Submit a pull request
-
-## 📄 License
-
-MIT License - see [LICENSE](LICENSE) file for details.
-
-## 👏 Acknowledgments
-
-- ARKit for face tracking
-- Supabase for backend
-- Bear & Fox sprites by [Artist Name]
-- Inspired by expression-based authentication research
-
-## 📞 Contact
-
-- **Author**: Ryan Reede
-- **GitHub**: [@yourusername](https://github.com/yourusername)
-- **Project**: [ARFace Encrypter](https://github.com/yourusername/arface-encrypter)
-
----
-
-**Built with ❤️ using Swift & SwiftUI**
-
-*This app was created as part of a learning project to explore ARKit face tracking and creative authentication methods.*
-
+MIT
